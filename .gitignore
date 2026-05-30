@@ -1,0 +1,10 @@
+tools/
+__pycache__/
+*.py[cod]
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+restish/cache

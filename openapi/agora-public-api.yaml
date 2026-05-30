@@ -1,0 +1,246 @@
+openapi: 3.1.0
+info:
+  title: Agora Public API
+  version: 0.1.0
+  description: Public API-key-enabled Agora API surface. This contract intentionally excludes internal, admin, dashboard, Firebase-only, and interactive settings APIs.
+servers:
+  - url: https://core.agoraai.tech/api/v1
+    description: Production API
+  - url: https://core-dev.agoraai.tech/api/v1
+    description: Development API
+  - url: http://localhost:8000/api/v1
+    description: Local Tilt backend
+tags:
+  - name: Authentication
+    description: API key exchange for short-lived bearer tokens.
+  - name: Leads
+    description: API-key-authenticated lead ingestion.
+paths:
+  /auth/api-key/token:
+    post:
+      tags: [Authentication]
+      operationId: loginWithApiKey
+      summary: Log in with an API key
+      description: Logs in with a long-lived Agora API key and returns a short-lived bearer JWT. The API key is only sent to this endpoint and should not be used for normal API calls.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiKeyTokenRequest"
+            examples:
+              apiKey:
+                summary: API key exchange
+                value:
+                  api_key: "agora_live_REDACTED"
+      responses:
+        "200":
+          description: Short-lived bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKeyTokenResponse"
+              examples:
+                token:
+                  value:
+                    access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.REDACTED"
+                    token_type: "Bearer"
+                    expires_in: 300
+        "401":
+          description: The API key is invalid, expired, or revoked.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalidApiKey:
+                  value:
+                    error: "invalid_api_key"
+                    message: "The provided API key is invalid, expired, or revoked."
+  /leads/upload:
+    post:
+      tags: [Leads]
+      operationId: uploadLeads
+      summary: Upload leads
+      description: Uploads lead JSON into an authorized campaign using a short-lived bearer token obtained from API key exchange. Processing reuses Agora's contact upload pipeline.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeadUploadRequest"
+            examples:
+              oneLead:
+                summary: Single lead upload
+                value:
+                  campaign_id: 1
+                  source: "api"
+                  leads:
+                    - first_name: "Jane"
+                      last_name: "Doe"
+                      email: "jane.doe@example.test"
+                      phone: "+15551234567"
+                      company: "Example Co"
+                      title: "VP of Operations"
+                  compliance_acknowledged: true
+      responses:
+        "202":
+          description: Upload accepted and queued or processed through the upload job pipeline.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeadUploadResponse"
+              examples:
+                accepted:
+                  value:
+                    status: "accepted"
+                    import_id: "5"
+                    received_count: 1
+                    valid_count: 1
+                    invalid_count: 0
+                    errors: []
+        "400":
+          description: Request validation failed, such as missing campaign for API-token upload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing, invalid, or expired bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Bearer token is not authorized for the target campaign or company.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Lead payload failed structured validation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeadUploadResponse"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Short-lived bearer token returned by `loginWithApiKey`.
+  schemas:
+    ApiKeyTokenRequest:
+      type: object
+      required: [api_key]
+      additionalProperties: false
+      properties:
+        api_key:
+          type: string
+          minLength: 16
+          description: Agora API key. Never log or persist this value outside secure credential storage.
+    ApiKeyTokenResponse:
+      type: object
+      required: [access_token, token_type, expires_in]
+      additionalProperties: false
+      properties:
+        access_token:
+          type: string
+          description: Short-lived bearer JWT. Do not log this value.
+        token_type:
+          type: string
+          const: Bearer
+        expires_in:
+          type: integer
+          example: 300
+    LeadUploadRequest:
+      type: object
+      required: [campaign_id, leads, compliance_acknowledged]
+      additionalProperties: false
+      properties:
+        campaign_id:
+          type: integer
+          minimum: 1
+          description: Target campaign. Required for API-key-derived bearer tokens.
+        source:
+          type: string
+          default: api
+        leads:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/LeadInput"
+        tags:
+          type: array
+          items:
+            type: string
+        skip_duplicates:
+          type: boolean
+          default: true
+        compliance_acknowledged:
+          type: boolean
+          description: Must be true to confirm the caller has permission to upload these contacts.
+        disclaimer_version:
+          type: string
+          default: v1.0
+    LeadInput:
+      type: object
+      additionalProperties: true
+      required: [phone]
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          description: E.164 formatted phone number is preferred.
+        company:
+          type: string
+        title:
+          type: string
+    LeadUploadResponse:
+      type: object
+      required: [status, import_id, received_count, valid_count, invalid_count, errors]
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          example: accepted
+        import_id:
+          type: string
+        received_count:
+          type: integer
+        valid_count:
+          type: integer
+        invalid_count:
+          type: integer
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeadUploadError"
+    LeadUploadError:
+      type: object
+      required: [row, message]
+      additionalProperties: false
+      properties:
+        row:
+          type: integer
+        field:
+          type: ["string", "null"]
+        message:
+          type: string
+    ErrorResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        error:
+          type: string
+        message:
+          type: string

@@ -1,0 +1,15 @@
+{
+  "name": "agora-api",
+  "version": "0.1.0",
+  "description": "Public Agora API guidance generated from the checked-in OpenAPI contract.",
+  "author": {
+    "name": "AGORA AI Software",
+    "url": "https://github.com/AGORA-AI-Software"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agora Public API",
+    "shortDescription": "Public Agora API workflow guidance.",
+    "longDescription": "Guidance for using Agora's public API-key token exchange, lead upload workflow, Restish CLI commands, and generated SDKs."
+  }
+}
