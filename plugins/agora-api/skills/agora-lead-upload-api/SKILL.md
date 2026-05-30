@@ -1,6 +1,6 @@
 ---
-name: agora-lead-upload-api
-description: Use Agora's public API to exchange an API key for a short-lived bearer token and upload leads to an authorized campaign. Use when generating customer-facing curl, Restish, or SDK examples for the lead upload workflow.
+name: agora-curl-examples
+description: Generate curl examples for the Agora public API lead upload workflow. Use when a user is debugging raw HTTP, validating request/response shape, or needs a minimal reproduction without any SDK or CLI dependency.
 ---
 
 # Agora Lead Upload API
