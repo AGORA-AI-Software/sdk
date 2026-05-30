@@ -8,3 +8,4 @@ __pycache__/
 !.yarn/sdks
 !.yarn/versions
 restish/cache
+node_modules
