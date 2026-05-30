@@ -51,7 +51,7 @@ import ai.agora.publicapi.JSON;
 /**
  * LeadUploadResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-05-29T18:59:21.199841901Z[Etc/UTC]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-05-30T11:27:04.472046684Z[Etc/UTC]", comments = "Generator version: 7.12.0")
 public class LeadUploadResponse {
   public static final String SERIALIZED_NAME_STATUS = "status";
   @SerializedName(SERIALIZED_NAME_STATUS)

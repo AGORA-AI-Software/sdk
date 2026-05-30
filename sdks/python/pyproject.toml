@@ -2,7 +2,7 @@
 name = "agora_public_api"
 version = "0.1.0"
 description = "Agora Public API"
-authors = ["AGORA AI Software <engineering@agoraai.tech>"]
+authors = ["OpenAPI Generator Community <team@openapitools.org>"]
 license = "UNLICENSED"
 readme = "README.md"
 repository = "https://github.com/AGORA-AI-Software/sdk"
