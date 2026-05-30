@@ -40,6 +40,7 @@ const RAW_RUNTIME_STATE =
           ["@semantic-release/git", "virtual:c0c1e13349139c4948d75454994e0454ce1fea2563701e6769dd1b765330db33ad6b0b11bbae511c9424768b69142c8be9917dd15556649edfddd17190fa4790#npm:10.0.1"],\
           ["@semantic-release/github", "virtual:15714e8662bba8efa1dad8001b93857491e6613f4b40badd5663ddecaf7c4e95569966eae3e099a55e2d2fd35c4a71c8ac0e1dff5733e3cf253b101a64993d97#npm:11.0.6"],\
           ["@semantic-release/release-notes-generator", "virtual:15714e8662bba8efa1dad8001b93857491e6613f4b40badd5663ddecaf7c4e95569966eae3e099a55e2d2fd35c4a71c8ac0e1dff5733e3cf253b101a64993d97#npm:14.1.1"],\
+          ["conventional-changelog-conventionalcommits", "npm:9.3.1"],\
           ["devmoji", "npm:2.3.0"],\
           ["husky", "npm:9.1.7"],\
           ["semantic-release", "npm:24.2.9"],\
@@ -69,6 +70,7 @@ const RAW_RUNTIME_STATE =
           ["@semantic-release/git", "virtual:c0c1e13349139c4948d75454994e0454ce1fea2563701e6769dd1b765330db33ad6b0b11bbae511c9424768b69142c8be9917dd15556649edfddd17190fa4790#npm:10.0.1"],\
           ["@semantic-release/github", "virtual:15714e8662bba8efa1dad8001b93857491e6613f4b40badd5663ddecaf7c4e95569966eae3e099a55e2d2fd35c4a71c8ac0e1dff5733e3cf253b101a64993d97#npm:11.0.6"],\
           ["@semantic-release/release-notes-generator", "virtual:15714e8662bba8efa1dad8001b93857491e6613f4b40badd5663ddecaf7c4e95569966eae3e099a55e2d2fd35c4a71c8ac0e1dff5733e3cf253b101a64993d97#npm:14.1.1"],\
+          ["conventional-changelog-conventionalcommits", "npm:9.3.1"],\
           ["devmoji", "npm:2.3.0"],\
           ["husky", "npm:9.1.7"],\
           ["semantic-release", "npm:24.2.9"],\
@@ -1434,6 +1436,16 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["compare-func", "npm:2.0.0"],\
           ["conventional-changelog-angular", "npm:8.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["conventional-changelog-conventionalcommits", [\
+      ["npm:9.3.1", {\
+        "packageLocation": "../../.yarn/berry/cache/conventional-changelog-conventionalcommits-npm-9.3.1-60d201b7bb-10c0.zip/node_modules/conventional-changelog-conventionalcommits/",\
+        "packageDependencies": [\
+          ["compare-func", "npm:2.0.0"],\
+          ["conventional-changelog-conventionalcommits", "npm:9.3.1"]\
         ],\
         "linkType": "HARD"\
       }]\
