@@ -75,7 +75,7 @@ class ApiSmokeTest {
     assertTrue(requestBody(request).contains("\"api_key\":\"agora_live_test\""));
 
     assertEquals("token-123", response.getAccessToken());
-    assertEquals("Bearer", response.getTokenType());
+    assertEquals("Bearer", response.getTokenType().getValue());
     assertEquals(3600, response.getExpiresIn());
   }
 
@@ -89,7 +89,11 @@ class ApiSmokeTest {
 
     LeadsApi api = new LeadsApi(apiClient);
     LeadUploadRequest body =
-        new LeadUploadRequest(42, Collections.singletonList(new LeadInput().phone("+15551234567")), true);
+        new LeadUploadRequest()
+            .campaignId(42)
+            .leads(Collections.singletonList(new LeadInput().phone("+15551234567")))
+            .skipDuplicates(true)
+            .complianceAcknowledged(true);
     LeadUploadResponse response = api.uploadLeads(body);
 
     Request request = requestRef.get();

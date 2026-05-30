@@ -68,11 +68,11 @@ generate_one go "sdks/go" \
   --additional-properties packageName=agorapublicapi,packageVersion=0.1.0
 
 if [[ -f "$repo_root/sdks/python/pyproject.toml" ]]; then
-  sed -i 's/authors = \["OpenAPI Generator Community <team@openapitools.org>"\]/authors = ["AGORA AI Software <engineering@agoraai.tech>"]/' "$repo_root/sdks/python/pyproject.toml"
+  sed -i '' 's/authors = \["OpenAPI Generator Community <team@openapitools.org>"\]/authors = ["AGORA AI Software <engineering@agoraai.tech>"]/' "$repo_root/sdks/python/pyproject.toml"
 fi
 
 if [[ -f "$repo_root/sdks/typescript/package.json" ]]; then
-  sed -i 's/"author": "OpenAPI-Generator"/"author": "AGORA AI Software"/' "$repo_root/sdks/typescript/package.json"
+  sed -i '' 's/"author": "OpenAPI-Generator"/"author": "AGORA AI Software"/' "$repo_root/sdks/typescript/package.json"
 fi
 
 if [[ -f "$repo_root/sdks/go/README.md" ]]; then

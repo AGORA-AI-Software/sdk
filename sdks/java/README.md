@@ -2,7 +2,7 @@
 
 Agora Public API
 - API version: 0.1.0
-  - Build date: 2026-05-29T18:59:21.199841901Z[Etc/UTC]
+  - Build date: 2026-05-30T11:27:04.472046684Z[Etc/UTC]
   - Generator version: 7.12.0
 
 Public API-key-enabled Agora API surface. This contract intentionally excludes internal, admin, dashboard, Firebase-only, and interactive settings APIs.
