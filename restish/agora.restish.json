@@ -1,7 +1,7 @@
 {
   "apis": {
     "agora": {
-      "base_url": "https://core-dev.agoraai.tech",
+      "base_url": "https://core.agoraai.tech",
       "spec_files": [
         "openapi/agora-public-api.yaml"
       ],
@@ -17,6 +17,19 @@
               }
             }
           }
+        },
+        "dev": {
+          "credentials": {
+            "bearerAuth": {
+              "auth": {
+                "type": "bearer",
+                "params": {
+                  "token": "env:AGORA_ACCESS_TOKEN"
+                }
+              }
+            }
+          },
+          "base_url": "https://core-dev.agoraai.tech"
         }
       }
     }

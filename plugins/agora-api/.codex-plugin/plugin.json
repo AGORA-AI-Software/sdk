@@ -8,7 +8,7 @@
   },
   "homepage": "https://github.com/AGORA-AI-Software/sdk",
   "repository": "https://github.com/AGORA-AI-Software/sdk",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "keywords": ["agora", "api", "openapi", "sdk", "leads"],
   "skills": "./skills/",
   "interface": {

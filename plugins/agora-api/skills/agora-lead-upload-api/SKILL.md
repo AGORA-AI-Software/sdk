@@ -1,11 +1,9 @@
 ---
 name: agora-lead-upload-api
-description: Use Agora's public API to exchange an API key for a short-lived bearer token and upload leads to an authorized campaign. Use when generating customer-facing curl, Restish, or SDK examples for the public lead upload workflow.
+description: Use Agora's public API to exchange an API key for a short-lived bearer token and upload leads to an authorized campaign. Use when generating customer-facing curl, Restish, or SDK examples for the lead upload workflow.
 ---
 
 # Agora Lead Upload API
-
-Use this skill for Agora's public API-key workflow only. Do not mention internal, admin, dashboard, settings, Firebase-only, RUM ingest, or operational endpoints.
 
 ## Public Operations
 
@@ -22,13 +20,13 @@ Use this skill for Agora's public API-key workflow only. Do not mention internal
 ## Curl Example
 
 ```bash
-curl -sS -X POST https://core-dev.agoraai.tech/api/v1/auth/api-key/token \
+curl -sS -X POST https://core.agoraai.tech/api/v1/auth/api-key/token \
   -H 'Content-Type: application/json' \
   -d '{"api_key":"agora_live_REDACTED"}'
 ```
 
 ```bash
-curl -sS -X POST https://core-dev.agoraai.tech/api/v1/leads/upload \
+curl -sS -X POST https://core.agoraai.tech/api/v1/leads/upload \
   -H "Authorization: Bearer $AGORA_ACCESS_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{

@@ -1,6 +1,26 @@
 # Agora Public API SDK
 
-This repo stores Agora's public OpenAPI contract, generated SDKs, Restish CLI guidance, and AI-agent skills for the API-key-authenticated public API.
+This repo contains Agora's public OpenAPI contract, generated SDKs, Restish CLI configuration, and AI-agent plugins for the API-key-authenticated public API.
+
+## SDKs
+
+| Language | Location | Install |
+|---|---|---|
+| Python | [`sdks/python`](sdks/python/README.md) | `pip install agora-public-api` |
+| TypeScript | [`sdks/typescript`](sdks/typescript/README.md) | `npm install @agora-ai/public-api` |
+| Java | [`sdks/java`](sdks/java/README.md) | Maven: `ai.agora:agora-public-api` |
+| Go | [`sdks/go`](sdks/go/README.md) | `go get github.com/AGORA-AI-Software/sdk/sdks/go` |
+
+## CLI (Restish)
+
+[Restish](https://rest.sh) is an OpenAPI-aware HTTP CLI — no Agora-specific binary required.
+
+```bash
+make install-restish
+make setup-restish
+```
+
+See [restish/README.md](restish/README.md) for usage.
 
 ## Contents
 
@@ -8,31 +28,31 @@ This repo stores Agora's public OpenAPI contract, generated SDKs, Restish CLI gu
 - [How-To Guides](#how-to-guides)
 - [Reference](#reference)
 - [Explanation](#explanation)
-- [SDK Generation](#sdk-generation)
-- [Restish Setup](#restish-setup)
-- [Release Pipeline](#release-pipeline)
-- [AI-Agent Plugins](#ai-agent-plugins)
+
+---
 
 ## Tutorial
 
-The first public workflow exchanges a long-lived API key for a short-lived bearer token, then uploads leads to an authorized campaign.
+This tutorial walks through exchanging an API key for a bearer token and uploading a lead — the two core operations of the public API.
+
+### Step 1 — Exchange your API key for a bearer token
 
 ```bash
-curl -sS -X POST https://core-dev.agoraai.tech/api/v1/auth/api-key/token \
+curl -sS -X POST https://core.agoraai.tech/api/v1/auth/api-key/token \
   -H 'Content-Type: application/json' \
   -d '{"api_key":"agora_live_REDACTED"}'
 ```
 
-Set the returned token locally:
+The response contains an `access_token`. Set it in your shell:
 
 ```bash
-export AGORA_ACCESS_TOKEN='PASTE_REDACTED_ACCESS_TOKEN'
+export AGORA_ACCESS_TOKEN='paste-token-here'
 ```
 
-Upload one lead:
+### Step 2 — Upload a lead
 
 ```bash
-curl -sS -X POST https://core-dev.agoraai.tech/api/v1/leads/upload \
+curl -sS -X POST https://core.agoraai.tech/api/v1/leads/upload \
   -H "Authorization: Bearer $AGORA_ACCESS_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -52,173 +72,139 @@ curl -sS -X POST https://core-dev.agoraai.tech/api/v1/leads/upload \
   }'
 ```
 
+---
+
 ## How-To Guides
 
-Use curl when validating raw HTTP behavior. Use Restish when you want an OpenAPI-aware CLI without an Agora-specific binary. Use a generated SDK for application code.
+### Use the CLI (Restish)
 
-Restish setup:
+Restish is the fastest way to explore the API without writing application code.
 
 ```bash
 make install-restish
 make setup-restish
-make restish-help
-```
 
-Log in with an API key and upload a lead:
+# Authenticate
+restish agora login-with-api-key '{"api_key":"agora_live_REDACTED"}'
+export AGORA_ACCESS_TOKEN='paste-token-here'
 
-```bash
-tools/restish/restish --rsh-config restish/agora.restish.json \
-  agora login-with-api-key \
-  '{"api_key":"agora_live_REDACTED"}'
-
-export AGORA_ACCESS_TOKEN='PASTE_REDACTED_ACCESS_TOKEN'
-
-tools/restish/restish --rsh-config restish/agora.restish.json \
-  agora upload-leads \
+# Upload leads
+restish agora upload-leads \
   '{"campaign_id":1,"leads":[{"phone":"+15551234567"}],"compliance_acknowledged":true}'
 ```
 
-The exact Restish command names come from OpenAPI `operationId` values. Verify them after the public docs route is live:
+Use the `dev` profile to target the development environment:
 
 ```bash
-restish agora --help
+restish --profile dev agora upload-leads ...
 ```
 
-SDK usage starts by regenerating clients from the checked-in public contract:
+### Use an SDK
 
-```bash
-make generate
-```
+Pick the SDK for your language and follow its README:
 
-Generated SDKs live under:
+- [Python SDK →](sdks/python/README.md)
+- [TypeScript SDK →](sdks/typescript/README.md)
+- [Java SDK →](sdks/java/README.md)
+- [Go SDK →](sdks/go/README.md)
 
-- `sdks/python`
-- `sdks/typescript`
-- `sdks/java`
-- `sdks/go`
+### Regenerate SDKs from the OpenAPI contract
 
-## Reference
-
-The checked-in public contract is [openapi/agora-public-api.yaml](openapi/agora-public-api.yaml). It currently includes:
-
-- `loginWithApiKey`: `POST /api/v1/auth/api-key/token`
-- `uploadLeads`: `POST /api/v1/leads/upload`
-
-Public docs targets:
-
-- Production OpenAPI: `https://core.agoraai.tech/openapi.json`
-- Development OpenAPI: `https://core-dev.agoraai.tech/openapi.json`
-- Swagger UI: `/api-docs`
-
-The public contract intentionally excludes internal, admin, dashboard, settings, Firebase-only, RUM ingest, and operational endpoints.
-
-## Explanation
-
-API keys are long-lived credentials and should only be sent to the token exchange endpoint. Normal API calls use the short-lived bearer token returned by that exchange.
-
-Lead upload requires a bearer token authorized for the target campaign. Expected failures include invalid API key, invalid bearer token, missing campaign, unauthorized campaign, and validation errors.
-
-Do not log API keys, bearer tokens, Authorization headers, or real lead payloads in examples, tests, generated skills, or SDK diagnostics.
-
-## SDK Generation
-
-Install either `openapi-generator-cli` locally or Docker. Then run:
+Install Docker or `openapi-generator-cli`, then:
 
 ```bash
 make lint-openapi
 make generate
 ```
 
-To refresh the checked-in contract from a live public docs route:
+### Refresh the OpenAPI contract from the live API
 
 ```bash
-make fetch-openapi OPENAPI_URL=https://core-dev.agoraai.tech/openapi.json
+make fetch-openapi OPENAPI_URL=https://core.agoraai.tech/openapi.json
 make lint-openapi
+make generate
 ```
 
-`make generate` runs SDK generation for Python, TypeScript, Java, and Go and refreshes the generated agent skill content.
-
-### Build SDKs Locally
-
-After installing tools in WSL, run:
+### Run SDK tests locally
 
 ```bash
-# TypeScript, with Yarn 4+ Plug'n'Play and no node_modules
-corepack enable
-yarn install
+# TypeScript
+corepack enable && yarn install
 yarn workspace @agora-ai/public-api build
 
 # Java
-cd sdks/java
-mvn -B test
-cd ../..
+cd sdks/java && mvn -B test
 
 # Go
-cd sdks/go
-go test ./...
-cd ../..
+cd sdks/go && go test ./...
+
+# Python
+cd sdks/python && pip install -e ".[dev]" && pytest
 ```
 
-The Go SDK is distributed idiomatically by Git tag from this repository:
+---
+
+## Reference
+
+### OpenAPI contract
+
+The checked-in contract is at [`openapi/agora-public-api.yaml`](openapi/agora-public-api.yaml).
+
+Live endpoints:
+
+| Environment | OpenAPI URL |
+|---|---|
+| Production | `https://core.agoraai.tech/openapi.json` |
+| Development | `https://core-dev.agoraai.tech/openapi.json` |
+
+Swagger UI is available at `/api-docs` on each host.
+
+### Available operations
+
+| Operation | Method | Path |
+|---|---|---|
+| `loginWithApiKey` | `POST` | `/api/v1/auth/api-key/token` |
+| `uploadLeads` | `POST` | `/api/v1/leads/upload` |
+
+### SDK generation
 
 ```bash
-go get github.com/AGORA-AI-Software/sdk/sdks/go@v0.1.0
+make generate           # regenerate all SDKs + skills from openapi/agora-public-api.yaml
+make generate-skills    # regenerate AI-agent skill content only
+make lint-openapi       # validate the OpenAPI contract
+make lint-plugin        # validate the AI-agent plugin manifests
 ```
 
-TypeScript, Python, and Java should be published to their native package registries once the public package names and credentials are finalized.
+### AI-agent plugins
 
-## Restish Setup
+Agent plugins live in [`plugins/agora-api`](plugins/agora-api). They expose reviewed skill content for AI agents that need to produce Agora API examples.
 
-Restish setup follows the official `api connect --spec` workflow: https://rest.sh/docs/getting-started/connect-to-an-api/
+---
 
-Install Restish however you prefer, or use the repo-local helper:
+## Explanation
 
-```bash
-make install-restish
+### Why two credentials?
+
+API keys are long-lived secrets and should only be sent to the token exchange endpoint. All subsequent requests use the short-lived bearer token returned by that exchange. This limits the blast radius of a leaked token and avoids exposing the API key in request logs.
+
+### Release pipeline
+
+This repo uses [semantic-release](https://semantic-release.gitbook.io) via Yarn 4 PnP. Merging to `main` with a conventional commit message (`feat:`, `fix:`, etc.) triggers a release that:
+
+1. Bumps version numbers across all SDK manifests
+2. Updates `CHANGELOG.md`
+3. Creates a GitHub release and tag
+4. The Git tag doubles as the Go module release
+
+TypeScript (npm), Python (PyPI), and Java (Maven Central) publishing should be added as registry-specific steps when package coordinates and credentials are finalized.
+
+### Repository layout
+
 ```
-
-Connect Restish manually against the checked-in spec:
-
-```bash
-tools/restish/restish --rsh-config restish/agora.restish.json \
-  api connect agora https://core-dev.agoraai.tech \
-  --spec openapi/agora-public-api.yaml \
-  --yes --replace \
-  'prompt.credentials.bearerAuth.token: env:AGORA_ACCESS_TOKEN'
+openapi/          Public OpenAPI contract
+sdks/             Generated SDK clients (Python, TypeScript, Java, Go)
+sdk-overrides/    Hand-written files that replace generated equivalents after each generation run
+plugins/          AI-agent plugin manifests and skills
+restish/          Restish CLI configuration
+scripts/          Generation, linting, release, and smoke-test scripts
 ```
-
-Verify the generated command surface:
-
-```bash
-tools/restish/restish --rsh-config restish/agora.restish.json agora --help
-tools/restish/restish --rsh-config restish/agora.restish.json agora login-with-api-key --rsh-generate-body
-tools/restish/restish --rsh-config restish/agora.restish.json agora upload-leads --rsh-generate-body
-```
-
-When the public OpenAPI URL is live, replace `--spec openapi/agora-public-api.yaml` with `--spec https://core-dev.agoraai.tech/openapi.json`.
-
-## Release Pipeline
-
-This repo uses Yarn 4+ with Plug'n'Play (`nodeLinker: pnp`) and semantic-release.
-
-```bash
-corepack enable
-yarn install
-yarn release:verify
-```
-
-The GitHub Actions release workflow uses the same `actions/create-github-app-token` pattern as the Agora repos and authenticates as the `agora-gh-automation` GitHub App using `GH_APP_ID` and `GH_APP_PRIVATE_KEY` repository secrets.
-
-The first release creates a repo tag, changelog, GitHub release, and synchronized SDK version metadata. That tag is the Go module release. Publishing TypeScript to npm, Python to PyPI, and Java to Maven Central should be added as registry-specific release steps when those package coordinates and credentials are ready.
-
-## AI-Agent Plugins
-
-Agent assets live in [plugins/agora-api](plugins/agora-api). The plugin exposes reviewed skill content for agents that need to produce public Agora API examples without relying on internal repositories.
-
-Regenerate skill content from the current public API contract:
-
-```bash
-make generate-skills
-```
-
-Review generated skills before release. They must mention only public operations and use redacted credentials plus synthetic lead data.
