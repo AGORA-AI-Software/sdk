@@ -89,7 +89,10 @@ class ApiSmokeTest {
 
     LeadsApi api = new LeadsApi(apiClient);
     LeadUploadRequest body =
-        new LeadUploadRequest(42, Collections.singletonList(new LeadInput().phone("+15551234567")), true);
+        new LeadUploadRequest()
+            .campaignId(42)
+            .leads(Collections.singletonList(new LeadInput().phone("+15551234567")))
+            .skipDuplicates(true);
     LeadUploadResponse response = api.uploadLeads(body);
 
     Request request = requestRef.get();
