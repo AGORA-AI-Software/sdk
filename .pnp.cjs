@@ -639,6 +639,7 @@ const RAW_RUNTIME_STATE =
           ["@semantic-release/commit-analyzer", "virtual:15714e8662bba8efa1dad8001b93857491e6613f4b40badd5663ddecaf7c4e95569966eae3e099a55e2d2fd35c4a71c8ac0e1dff5733e3cf253b101a64993d97#npm:13.0.1"],\
           ["@types/semantic-release", null],\
           ["conventional-changelog-angular", "npm:8.3.1"],\
+          ["conventional-changelog-conventionalcommits", "npm:9.3.1"],\
           ["conventional-changelog-writer", "npm:8.4.0"],\
           ["conventional-commits-filter", "npm:5.0.0"],\
           ["conventional-commits-parser", "npm:6.4.0"],\
@@ -816,6 +817,7 @@ const RAW_RUNTIME_STATE =
           ["@semantic-release/release-notes-generator", "virtual:15714e8662bba8efa1dad8001b93857491e6613f4b40badd5663ddecaf7c4e95569966eae3e099a55e2d2fd35c4a71c8ac0e1dff5733e3cf253b101a64993d97#npm:14.1.1"],\
           ["@types/semantic-release", null],\
           ["conventional-changelog-angular", "npm:8.3.1"],\
+          ["conventional-changelog-conventionalcommits", "npm:9.3.1"],\
           ["conventional-changelog-writer", "npm:8.4.0"],\
           ["conventional-commits-filter", "npm:5.0.0"],\
           ["conventional-commits-parser", "npm:6.4.0"],\

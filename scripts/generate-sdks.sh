@@ -102,4 +102,9 @@ copy_overlay_tree() {
 copy_overlay_file "sdk-overrides/go/smoke_test.go" "sdks/go/smoke_test.go"
 copy_overlay_tree "sdk-overrides/java/src/test/java" "sdks/java/src/test/java"
 
+copy_overlay_file "sdk-overrides/python/README.md" "sdks/python/README.md"
+copy_overlay_file "sdk-overrides/typescript/README.md" "sdks/typescript/README.md"
+copy_overlay_file "sdk-overrides/java/README.md" "sdks/java/README.md"
+copy_overlay_file "sdk-overrides/go/README.md" "sdks/go/README.md"
+
 echo "Generated SDKs from $spec"
