@@ -31,7 +31,7 @@ updateJson("sdks/typescript/package.json", (data) => {
 });
 
 replace("sdks/python/pyproject.toml", /^version = ".*"$/m, `version = "${version}"`);
-replace("sdks/java/pom.xml", /<artifactId>agora-public-api<\/artifactId>\s*\n\s*<version>[^<]+<\/version>/, `<artifactId>agora-public-api</artifactId>\n  <version>${version}</version>`);
+replace("sdks/java/pom.xml", /(<groupId>ai\.agora<\/groupId>\s*\n\s*<artifactId>agora-public-api<\/artifactId>[\s\S]*?<version>)[^<]+(<\/version>)/, `$1${version}$2`);
 replace("openapi/agora-public-api.yaml", /^  version: .*$/m, `  version: ${version}`);
 
 console.log(`Set SDK release version to ${version}`);
