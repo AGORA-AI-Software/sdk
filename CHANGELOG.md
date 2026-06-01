@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.0...v1.0.1) (2026-06-01)
+
+### Bug Fixes
+
+* **cla:** pin action to commit SHA instead of mutable tag (CodeQL) ([#9](https://github.com/AGORA-AI-Software/sdk/issues/9)) ([d73b343](https://github.com/AGORA-AI-Software/sdk/commit/d73b343e9573900a3cdc3eb7e5ace429be899870))
+
 ## 1.0.0 (2026-06-01)
 
 ### Bug Fixes
