@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Agora Public API
-  version: 0.1.0
+  version: 1.0.0
   description: Public API-key-enabled Agora API surface. This contract intentionally excludes internal, admin, dashboard, Firebase-only, and interactive settings APIs.
 servers:
   - url: https://core.agoraai.tech/api/v1
