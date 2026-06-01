@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.1...v1.0.2) (2026-06-01)
+
+### Bug Fixes
+
+* **cla:** populate empty cla.yml with correct workflow ([#10](https://github.com/AGORA-AI-Software/sdk/issues/10)) ([eb87de8](https://github.com/AGORA-AI-Software/sdk/commit/eb87de8ecc2034d2b12ccac3b4e33c98851fce37))
+
 ## [1.0.1](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.0...v1.0.1) (2026-06-01)
 
 ### Bug Fixes
