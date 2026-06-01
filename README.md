@@ -152,12 +152,10 @@ The checked-in contract is at [`openapi/agora-public-api.yaml`](openapi/agora-pu
 
 Live endpoints:
 
-| Environment | OpenAPI URL |
-|---|---|
-| Production | `https://core.agoraai.tech/openapi.json` |
-| Development | `https://core-dev.agoraai.tech/openapi.json` |
-
-Swagger UI is available at `/api-docs` on each host.
+| Environment | OpenAPI URL | Swagger UI |
+|---|---|---|
+| Production | `https://core.agoraai.tech/openapi.json` | https://core.agoraai.tech/api-docs |
+| Development | `https://core-dev.agoraai.tech/openapi.json` | https://core-dev.agoraai.tech/api-docs |
 
 ### Available operations
 
