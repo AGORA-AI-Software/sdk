@@ -2,6 +2,8 @@
 
 This repo contains Agora's public OpenAPI contract, generated SDKs, Restish CLI configuration, and AI-agent plugins for the API-key-authenticated public API.
 
+**API Docs:** [core.agoraai.tech/api-docs](https://core.agoraai.tech/api-docs) · [core-dev.agoraai.tech/api-docs](https://core-dev.agoraai.tech/api-docs)
+
 ## SDKs
 
 | Language | Location | Install |
