@@ -2,7 +2,7 @@
   "name": "@agora-ai/public-api",
   "version": "0.1.0",
   "description": "OpenAPI client for @agora-ai/public-api",
-  "author": "OpenAPI-Generator",
+  "author": "AGORA AI Software",
   "repository": {
     "type": "git",
     "url": "https://github.com/AGORA-AI-Software/sdk.git"

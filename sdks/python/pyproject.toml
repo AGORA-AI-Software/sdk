@@ -2,7 +2,7 @@
 name = "agora_public_api"
 version = "0.1.0"
 description = "Agora Public API"
-authors = ["OpenAPI Generator Community <team@openapitools.org>"]
+authors = ["AGORA AI Software <engineering@agoraai.tech>"]
 license = "UNLICENSED"
 readme = "README.md"
 repository = "https://github.com/AGORA-AI-Software/sdk"
@@ -12,13 +12,13 @@ include = ["agora_public_api/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.8"
 
-urllib3 = ">= 2.3.0, < 3.0.0"
+urllib3 = ">= 1.25.3, < 3.0.0"
 python-dateutil = ">= 2.8.2"
 pydantic = ">= 2"
 typing-extensions = ">= 4.7.1"
 
 [tool.poetry.dev-dependencies]
-pytest = ">= 8.1.2"
+pytest = ">= 7.2.1"
 pytest-cov = ">= 2.8.1"
 tox = ">= 3.9.0"
 flake8 = ">= 4.0.0"

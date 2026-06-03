@@ -1,50 +1,32 @@
 package agorapublicapi
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
-type smokeRoundTripper struct {
-	t       *testing.T
-	handler func(*http.Request) *http.Response
-}
-
-func (s smokeRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	return s.handler(req), nil
-}
-
-func newSmokeClient(t *testing.T, handler func(*http.Request) *http.Response) *APIClient {
+func newSmokeClient(t *testing.T, handler http.HandlerFunc) *APIClient {
 	t.Helper()
 
+	server := httptest.NewServer(handler)
+	t.Cleanup(server.Close)
+
 	cfg := NewConfiguration()
-	cfg.Servers = ServerConfigurations{{URL: "http://example.invalid/api/v1"}}
-	cfg.HTTPClient = &http.Client{Transport: smokeRoundTripper{t: t, handler: handler}}
+	cfg.Servers = ServerConfigurations{{URL: server.URL + "/api/v1"}}
 
 	return NewAPIClient(cfg)
 }
 
-func readJSONMap(t *testing.T, r *http.Request) map[string]any {
+func readJSONMap(t *testing.T, r io.Reader) map[string]any {
 	t.Helper()
 
 	var payload map[string]any
-	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		t.Fatalf("decode request body: %v", err)
-	}
-
-	return payload
-}
-
-func readJSONMapFromReader(t *testing.T, reader io.Reader) map[string]any {
-	t.Helper()
-
-	var payload map[string]any
-	if err := json.NewDecoder(reader).Decode(&payload); err != nil {
+	if err := json.NewDecoder(r).Decode(&payload); err != nil {
 		t.Fatalf("decode request body: %v", err)
 	}
 
@@ -52,7 +34,7 @@ func readJSONMapFromReader(t *testing.T, reader io.Reader) map[string]any {
 }
 
 func TestLoginWithApiKeySmoke(t *testing.T) {
-	client := newSmokeClient(t, func(r *http.Request) *http.Response {
+	client := newSmokeClient(t, func(w http.ResponseWriter, r *http.Request) {
 		if got, want := r.Method, http.MethodPost; got != want {
 			t.Fatalf("method = %s, want %s", got, want)
 		}
@@ -69,16 +51,14 @@ func TestLoginWithApiKeySmoke(t *testing.T) {
 			t.Fatalf("accept = %s, want %s", got, want)
 		}
 
-		body := readJSONMapFromReader(t, r.Body)
+		body := readJSONMap(t, r.Body)
 		if got, want := body["api_key"], "agora_live_test"; got != want {
 			t.Fatalf("api_key = %v, want %v", got, want)
 		}
 
-		return &http.Response{
-			StatusCode: http.StatusOK,
-			Header:     http.Header{"Content-Type": []string{"application/json"}},
-			Body:       ioNopCloser(bytes.NewBufferString(`{"access_token":"token-123","token_type":"Bearer","expires_in":3600}`)),
-		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"access_token":"token-123","token_type":"Bearer","expires_in":3600}`))
 	})
 
 	resp, _, err := client.AuthenticationAPI.
@@ -101,7 +81,7 @@ func TestLoginWithApiKeySmoke(t *testing.T) {
 }
 
 func TestUploadLeadsSmoke(t *testing.T) {
-	client := newSmokeClient(t, func(r *http.Request) *http.Response {
+	client := newSmokeClient(t, func(w http.ResponseWriter, r *http.Request) {
 		if got, want := r.Method, http.MethodPost; got != want {
 			t.Fatalf("method = %s, want %s", got, want)
 		}
@@ -115,7 +95,7 @@ func TestUploadLeadsSmoke(t *testing.T) {
 			t.Fatalf("content-type = %s, want %s", got, want)
 		}
 
-		body := readJSONMap(t, r)
+		body := readJSONMap(t, r.Body)
 		if got, want := body["campaign_id"], float64(42); got != want {
 			t.Fatalf("campaign_id = %v, want %v", got, want)
 		}
@@ -147,14 +127,14 @@ func TestUploadLeadsSmoke(t *testing.T) {
 			t.Fatal("accept header is empty")
 		}
 
-		return &http.Response{
-			StatusCode: http.StatusAccepted,
-			Header:     http.Header{"Content-Type": []string{"application/json"}},
-			Body:       ioNopCloser(bytes.NewBufferString(`{"status":"accepted","import_id":"imp_123","received_count":1,"valid_count":1,"invalid_count":0,"errors":[]}`)),
-		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
+		_, _ = w.Write([]byte(`{"status":"accepted","import_id":"imp_123","received_count":1,"valid_count":1,"invalid_count":0,"errors":[]}`))
 	})
 
 	ctx := context.WithValue(context.Background(), ContextAccessToken, "token-abc")
+	cfg := client.cfg
+	cfg.HTTPClient = http.DefaultClient
 
 	_, _, err := client.LeadsAPI.
 		UploadLeads(ctx).
@@ -163,14 +143,4 @@ func TestUploadLeadsSmoke(t *testing.T) {
 	if err != nil {
 		t.Fatalf("UploadLeads returned error: %v", err)
 	}
-}
-
-type nopCloser struct {
-	*bytes.Buffer
-}
-
-func (n nopCloser) Close() error { return nil }
-
-func ioNopCloser(buf *bytes.Buffer) io.ReadCloser {
-	return nopCloser{Buffer: buf}
 }

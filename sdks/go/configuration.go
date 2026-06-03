@@ -1,7 +1,7 @@
 /*
 Agora Public API
 
-Public API-key-enabled Agora API surface. This contract intentionally excludes internal, admin, dashboard, Firebase-only, and interactive settings APIs.
+Agora Public API. Authenticate with an API key and upload leads to authorized campaigns.
 
 API version: 0.1.0
 */
