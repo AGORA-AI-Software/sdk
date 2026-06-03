@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agora_public_api"
-version = "0.1.0"
+version = "1.0.2"
 description = "Agora Public API"
 authors = ["AGORA AI Software <engineering@agoraai.tech>"]
 license = "UNLICENSED"
