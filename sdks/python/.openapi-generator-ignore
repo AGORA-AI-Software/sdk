@@ -21,3 +21,8 @@
 #docs/*.md
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
+
+
+# Hand-patched to fix overly permissive regex range (CodeQL py/overly-permissive-regular-expression).
+# Regeneration is blocked here; the patched version lives in sdk-overrides/python/.
+agora_public_api/api_client.py
