@@ -1,6 +1,6 @@
 /*
  * Agora Public API
- * Public API-key-enabled Agora API surface. This contract intentionally excludes internal, admin, dashboard, Firebase-only, and interactive settings APIs.
+ * Agora Public API. Authenticate with an API key and upload leads to authorized campaigns.
  *
  * The version of the OpenAPI document: 0.1.0
  * 
@@ -13,7 +13,7 @@
 
 package ai.agora.publicapi;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-05-30T11:27:04.472046684Z[Etc/UTC]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-03T15:10:42.335121012Z[Etc/UTC]", comments = "Generator version: 7.12.0")
 public class Configuration {
     public static final String VERSION = "0.1.0";
 

@@ -2,6 +2,8 @@
 
 This repo contains Agora's public OpenAPI contract, generated SDKs, Restish CLI configuration, and AI-agent plugins for the API-key-authenticated public API.
 
+**API Docs:** [core.agoraai.tech/api-docs](https://core.agoraai.tech/api-docs) · [core-dev.agoraai.tech/api-docs](https://core-dev.agoraai.tech/api-docs)
+
 ## SDKs
 
 | Language | Location | Install |
@@ -152,12 +154,10 @@ The checked-in contract is at [`openapi/agora-public-api.yaml`](openapi/agora-pu
 
 Live endpoints:
 
-| Environment | OpenAPI URL |
-|---|---|
-| Production | `https://core.agoraai.tech/openapi.json` |
-| Development | `https://core-dev.agoraai.tech/openapi.json` |
-
-Swagger UI is available at `/api-docs` on each host.
+| Environment | OpenAPI URL | Swagger UI |
+|---|---|---|
+| Production | `https://core.agoraai.tech/openapi.json` | https://core.agoraai.tech/api-docs |
+| Development | `https://core-dev.agoraai.tech/openapi.json` | https://core-dev.agoraai.tech/api-docs |
 
 ### Available operations
 

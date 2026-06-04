@@ -10,26 +10,26 @@
           "credentials": {
             "bearerAuth": {
               "auth": {
-                "type": "bearer",
+                "type": "external-tool",
                 "params": {
-                  "token": "env:AGORA_ACCESS_TOKEN"
+                  "commandline": "bash scripts/get-token.sh https://core.agoraai.tech"
                 }
               }
             }
           }
         },
         "dev": {
+          "base_url": "https://core-dev.agoraai.tech",
           "credentials": {
             "bearerAuth": {
               "auth": {
-                "type": "bearer",
+                "type": "external-tool",
                 "params": {
-                  "token": "env:AGORA_ACCESS_TOKEN"
+                  "commandline": "bash scripts/get-token.sh https://core-dev.agoraai.tech"
                 }
               }
             }
-          },
-          "base_url": "https://core-dev.agoraai.tech"
+          }
         }
       }
     }
