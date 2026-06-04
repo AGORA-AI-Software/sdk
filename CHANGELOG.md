@@ -1,3 +1,9 @@
+## [1.0.3](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.2...v1.0.3) (2026-06-04)
+
+### Bug Fixes
+
+* sync API description with agora-backend change ([#11](https://github.com/AGORA-AI-Software/sdk/issues/11)) ([e0918f7](https://github.com/AGORA-AI-Software/sdk/commit/e0918f7b3ed354ad9d5569339221232035a586e2))
+
 ## [1.0.2](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.1...v1.0.2) (2026-06-01)
 
 ### Bug Fixes
