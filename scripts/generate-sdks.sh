@@ -69,6 +69,26 @@ generate_one go "sdks/go" \
 
 if [[ -f "$repo_root/sdks/python/pyproject.toml" ]]; then
   sed -i '' 's/authors = \["OpenAPI Generator Community <team@openapitools.org>"\]/authors = ["AGORA AI Software <engineering@agoraai.tech>"]/' "$repo_root/sdks/python/pyproject.toml"
+  # Security: pin minimum versions to avoid known CVEs
+  sed -i '' 's/urllib3 = ">= 1\.25\.3/urllib3 = ">= 2.3.0/' "$repo_root/sdks/python/pyproject.toml"
+  sed -i '' 's/pytest = ">= 7\.[0-9]/pytest = ">= 8.1.2/' "$repo_root/sdks/python/pyproject.toml"
+fi
+
+if [[ -f "$repo_root/sdks/python/requirements.txt" ]]; then
+  sed -i '' 's/urllib3 >= 1\.25\.3/urllib3 >= 2.3.0/' "$repo_root/sdks/python/requirements.txt"
+fi
+
+if [[ -f "$repo_root/sdks/python/setup.py" ]]; then
+  sed -i '' 's/urllib3 >= 1\.25\.3/urllib3 >= 2.3.0/' "$repo_root/sdks/python/setup.py"
+fi
+
+if [[ -f "$repo_root/sdks/python/test-requirements.txt" ]]; then
+  sed -i '' 's/pytest >= 7\.[0-9]/pytest >= 8.1.2/' "$repo_root/sdks/python/test-requirements.txt"
+fi
+
+if [[ -f "$repo_root/sdks/java/pom.xml" ]]; then
+  # Security: pin commons-lang3 to avoid known CVE
+  sed -i '' 's/<commons-lang3-version>3\.1[0-9]\.[0-9]</<commons-lang3-version>3.18.0</' "$repo_root/sdks/java/pom.xml"
 fi
 
 if [[ -f "$repo_root/sdks/typescript/package.json" ]]; then
