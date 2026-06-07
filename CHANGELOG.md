@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.3...v1.0.4) (2026-06-07)
+
+### Bug Fixes
+
+* bump urllib3 >=2.3.0, pytest >=8.1.2, commons-lang3 3.18.0 ([#12](https://github.com/AGORA-AI-Software/sdk/issues/12)) ([f760618](https://github.com/AGORA-AI-Software/sdk/commit/f760618496625f9d0f78402e98fbcfa19b892c38))
+
 ## [1.0.3](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.2...v1.0.3) (2026-06-04)
 
 ### Bug Fixes

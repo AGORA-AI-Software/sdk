@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Agora Public API
-  version: 1.0.3
+  version: 1.0.4
   description: Agora Public API. Authenticate with an API key and upload leads to authorized campaigns.
 servers:
   - url: https://core.agoraai.tech/api/v1
