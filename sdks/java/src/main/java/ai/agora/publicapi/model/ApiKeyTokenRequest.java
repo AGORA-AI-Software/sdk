@@ -48,7 +48,7 @@ import ai.agora.publicapi.JSON;
 /**
  * ApiKeyTokenRequest
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-17T17:25:58.394254106Z[Etc/UTC]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-17T17:42:51.106071275Z[Etc/UTC]", comments = "Generator version: 7.12.0")
 public class ApiKeyTokenRequest {
   public static final String SERIALIZED_NAME_API_KEY = "api_key";
   @SerializedName(SERIALIZED_NAME_API_KEY)

@@ -136,7 +136,7 @@ paths:
       summary: Upload leads
       tags:
       - Leads
-  /campaigns/{campaign_id}/webhooks/events:
+  /webhooks/{campaign_id}/events:
     get:
       description: Returns all event type strings that can be subscribed to on a webhook
         endpoint.
@@ -171,9 +171,10 @@ paths:
       summary: List webhook event types
       tags:
       - Webhooks
-  /campaigns/{campaign_id}/webhooks/endpoints:
+  /webhooks/{campaign_id}/endpoints:
     get:
-      description: Returns all webhook endpoints registered on a campaign.
+      description: Returns all webhook endpoints configured on a campaign. Does not
+        include signing secrets — use the Agora dashboard to manage secrets.
       operationId: listWebhookEndpoints
       parameters:
       - $ref: '#/components/parameters/CampaignId'
@@ -181,9 +182,22 @@ paths:
         "200":
           content:
             application/json:
+              examples:
+                endpoints:
+                  value:
+                  - id: 12
+                    campaign_id: 1
+                    url: https://hooks.example.com/agora
+                    description: Production lead handler
+                    subscribed_events:
+                    - lead.created
+                    - lead.status_changed
+                    is_enabled: true
+                    created_at: 2026-06-01T10:00:00Z
+                    last_delivery_is_successful: true
               schema:
                 items:
-                  $ref: '#/components/schemas/WebhookEndpointResponse'
+                  $ref: '#/components/schemas/WebhookEndpointSummary'
                 type: array
           description: List of webhook endpoints.
         "401":
@@ -195,198 +209,14 @@ paths:
       summary: List webhook endpoints
       tags:
       - Webhooks
-    post:
-      description: "Registers a new webhook endpoint on a campaign. Returns the endpoint\
-        \ with its signing secret — store it securely, it will not be shown again."
-      operationId: createWebhookEndpoint
-      parameters:
-      - $ref: '#/components/parameters/CampaignId'
-      requestBody:
-        content:
-          application/json:
-            examples:
-              create:
-                summary: Subscribe to lead events
-                value:
-                  url: https://hooks.example.com/agora
-                  description: Production lead handler
-                  subscribed_events:
-                  - lead.created
-                  - lead.status_changed
-                  is_enabled: true
-            schema:
-              $ref: '#/components/schemas/WebhookEndpointCreate'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookEndpointResponse'
-          description: Endpoint created. The `secret` field is only returned here
-            — store it securely.
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Invalid event type or request body.
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "403":
-          $ref: '#/components/responses/Forbidden'
-      security:
-      - bearerAuth: []
-      summary: Create a webhook endpoint
-      tags:
-      - Webhooks
-  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}:
-    delete:
-      description: Permanently deletes a webhook endpoint and all its delivery history.
-      operationId: deleteWebhookEndpoint
-      parameters:
-      - $ref: '#/components/parameters/CampaignId'
-      - $ref: '#/components/parameters/EndpointId'
-      responses:
-        "204":
-          description: Endpoint deleted.
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "403":
-          $ref: '#/components/responses/Forbidden'
-        "404":
-          $ref: '#/components/responses/NotFound'
-      security:
-      - bearerAuth: []
-      summary: Delete a webhook endpoint
-      tags:
-      - Webhooks
-    patch:
-      description: Updates one or more fields on an existing webhook endpoint. Omitted
-        fields are unchanged.
-      operationId: updateWebhookEndpoint
-      parameters:
-      - $ref: '#/components/parameters/CampaignId'
-      - $ref: '#/components/parameters/EndpointId'
-      requestBody:
-        content:
-          application/json:
-            examples:
-              disable:
-                summary: Disable an endpoint
-                value:
-                  is_enabled: false
-              changeUrl:
-                summary: Update the destination URL
-                value:
-                  url: https://hooks.example.com/agora-v2
-            schema:
-              $ref: '#/components/schemas/WebhookEndpointUpdate'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookEndpointResponse'
-          description: Updated endpoint.
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Invalid event type or request body.
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "403":
-          $ref: '#/components/responses/Forbidden'
-        "404":
-          $ref: '#/components/responses/NotFound'
-      security:
-      - bearerAuth: []
-      summary: Update a webhook endpoint
-      tags:
-      - Webhooks
-  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/deliveries:
+  /webhooks/{campaign_id}/endpoints/{endpoint_id}/health:
     get:
-      description: "Returns the delivery history for a webhook endpoint, ordered by\
-        \ most recent first."
-      operationId: listWebhookDeliveries
-      parameters:
-      - $ref: '#/components/parameters/CampaignId'
-      - $ref: '#/components/parameters/EndpointId'
-      - description: Filter by delivery outcome. Omit to return all deliveries.
-        explode: true
-        in: query
-        name: success
-        required: false
-        schema:
-          type: boolean
-        style: form
-      - description: Maximum number of deliveries to return.
-        explode: true
-        in: query
-        name: limit
-        required: false
-        schema:
-          default: 50
-          maximum: 200
-          minimum: 1
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/WebhookDeliveryResponse'
-                type: array
-          description: "List of deliveries, most recent first."
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "403":
-          $ref: '#/components/responses/Forbidden'
-        "404":
-          $ref: '#/components/responses/NotFound'
-      security:
-      - bearerAuth: []
-      summary: List deliveries for a webhook endpoint
-      tags:
-      - Webhooks
-  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/test:
-    post:
-      description: Sends a synthetic `ping` event to the endpoint URL and records
-        the delivery result. Useful for verifying connectivity and signature verification
-        before going live.
-      operationId: testWebhookEndpoint
-      parameters:
-      - $ref: '#/components/parameters/CampaignId'
-      - $ref: '#/components/parameters/EndpointId'
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookDeliveryResponse'
-          description: Delivery record for the test ping.
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "403":
-          $ref: '#/components/responses/Forbidden'
-        "404":
-          $ref: '#/components/responses/NotFound'
-      security:
-      - bearerAuth: []
-      summary: Send a test ping to a webhook endpoint
-      tags:
-      - Webhooks
-  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/regenerate-secret:
-    post:
-      description: Rotates the HMAC-SHA256 signing secret for a webhook endpoint.
-        The old secret stops working immediately. Store the new secret securely —
-        it will not be shown again.
-      operationId: regenerateWebhookSecret
+      description: |
+        Returns a delivery health snapshot for the endpoint: total/successful/failed
+        delivery counts, success rate, last delivery timestamp, and average response
+        time. Use this to monitor the reliability of your webhook integration — alert
+        on a dropping success rate or a stale `last_delivery_at`.
+      operationId: getWebhookEndpointHealth
       parameters:
       - $ref: '#/components/parameters/CampaignId'
       - $ref: '#/components/parameters/EndpointId'
@@ -395,12 +225,35 @@ paths:
           content:
             application/json:
               examples:
-                newSecret:
+                healthy:
+                  summary: Healthy endpoint
                   value:
-                    secret: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+                    endpoint_id: 12
+                    url: https://hooks.example.com/agora
+                    is_enabled: true
+                    total_deliveries: 843
+                    successful_deliveries: 841
+                    failed_deliveries: 2
+                    success_rate: 0.9976
+                    last_delivery_at: 2026-06-17T14:22:01Z
+                    last_delivery_is_successful: true
+                    avg_duration_ms: 142.3
+                degraded:
+                  summary: Endpoint with failures
+                  value:
+                    endpoint_id: 13
+                    url: https://hooks.example.com/agora-v2
+                    is_enabled: true
+                    total_deliveries: 50
+                    successful_deliveries: 30
+                    failed_deliveries: 20
+                    success_rate: 0.6
+                    last_delivery_at: 2026-06-17T13:00:00Z
+                    last_delivery_is_successful: false
+                    avg_duration_ms: 9800.0
               schema:
-                $ref: '#/components/schemas/RegenerateSecretResponse'
-          description: New signing secret.
+                $ref: '#/components/schemas/WebhookEndpointHealth'
+          description: Delivery health snapshot.
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":
@@ -409,40 +262,7 @@ paths:
           $ref: '#/components/responses/NotFound'
       security:
       - bearerAuth: []
-      summary: Regenerate the signing secret
-      tags:
-      - Webhooks
-  /campaigns/{campaign_id}/webhooks/deliveries/{delivery_id}/redeliver:
-    post:
-      description: Re-sends a previously delivered (or failed) event to the original
-        endpoint. Creates a new delivery record linked to the original via `redelivery_of_id`.
-      operationId: redeliverWebhookDelivery
-      parameters:
-      - $ref: '#/components/parameters/CampaignId'
-      - description: ID of the delivery to redeliver.
-        explode: false
-        in: path
-        name: delivery_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookDeliveryResponse'
-          description: New delivery record for the redelivery attempt.
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "403":
-          $ref: '#/components/responses/Forbidden'
-        "404":
-          $ref: '#/components/responses/NotFound'
-      security:
-      - bearerAuth: []
-      summary: Redeliver a webhook delivery
+      summary: Get delivery health for a webhook endpoint
       tags:
       - Webhooks
 components:
@@ -657,66 +477,7 @@ components:
       required:
       - message
       - row
-    WebhookEndpointCreate:
-      additionalProperties: false
-      example:
-        is_enabled: true
-        subscribed_events:
-        - subscribed_events
-        - subscribed_events
-        description: description
-        url: https://hooks.example.com/agora
-      properties:
-        url:
-          description: HTTPS URL Agora will POST events to.
-          example: https://hooks.example.com/agora
-          format: uri
-          type: string
-        description:
-          description: Optional human-readable label for this endpoint.
-          type: string
-          nullable: true
-        subscribed_events:
-          default: []
-          description: Event types to subscribe to. Use `listWebhookEventTypes` for
-            valid values.
-          items:
-            type: string
-          type: array
-        is_enabled:
-          default: true
-          description: Whether the endpoint should receive deliveries.
-          type: boolean
-      required:
-      - url
-    WebhookEndpointUpdate:
-      additionalProperties: false
-      example:
-        is_enabled: true
-        subscribed_events:
-        - subscribed_events
-        - subscribed_events
-        description: description
-        url: https://openapi-generator.tech
-      properties:
-        url:
-          description: New destination URL.
-          format: uri
-          type: string
-          nullable: true
-        description:
-          type: string
-          nullable: true
-        subscribed_events:
-          description: Replaces the full subscribed event list.
-          items:
-            type: string
-          type: array
-          nullable: true
-        is_enabled:
-          type: boolean
-          nullable: true
-    WebhookEndpointResponse:
+    WebhookEndpointSummary:
       additionalProperties: false
       example:
         is_enabled: true
@@ -726,7 +487,6 @@ components:
         description: description
         created_at: 2000-01-23T04:56:07.000+00:00
         id: 0
-        secret: secret
         campaign_id: 6
         url: https://openapi-generator.tech
         last_delivery_is_successful: true
@@ -736,12 +496,14 @@ components:
         campaign_id:
           type: integer
         url:
+          description: Destination URL events are delivered to.
           format: uri
           type: string
         description:
           type: string
           nullable: true
         subscribed_events:
+          description: Event types this endpoint is subscribed to.
           items:
             type: string
           type: array
@@ -750,10 +512,6 @@ components:
         created_at:
           format: date-time
           type: string
-        secret:
-          description: Signing secret. Only returned on creation — store it securely.
-          type: string
-          nullable: true
         last_delivery_is_successful:
           description: "Outcome of the most recent delivery attempt, or null if no\
             \ deliveries yet."
@@ -766,77 +524,64 @@ components:
       - is_enabled
       - subscribed_events
       - url
-    WebhookDeliveryResponse:
+    WebhookEndpointHealth:
       additionalProperties: false
       example:
-        duration_ms: 5
-        is_successful: true
-        event_type: lead.created
-        attempt_number: 5
-        response_status: 1
-        payload: "{}"
-        redelivery_of_id: 2
-        endpoint_id: 6
-        response_body: response_body
-        id: 0
-        delivered_at: 2000-01-23T04:56:07.000+00:00
+        is_enabled: true
+        failed_deliveries: 5
+        successful_deliveries: 1
+        total_deliveries: 6
+        avg_duration_ms: 2.302136
+        endpoint_id: 0
+        success_rate: 5.637377
+        url: https://openapi-generator.tech
+        last_delivery_at: 2000-01-23T04:56:07.000+00:00
+        last_delivery_is_successful: true
       properties:
-        id:
-          type: integer
         endpoint_id:
           type: integer
-        event_type:
-          example: lead.created
+        url:
+          format: uri
           type: string
-        payload:
-          description: Full JSON payload that was sent to the endpoint.
-          type: object
-        response_status:
-          description: "HTTP status code returned by the endpoint, or null if the\
-            \ request failed to connect."
-          type: integer
-          nullable: true
-        response_body:
-          description: First 1 KB of the response body.
-          type: string
-          nullable: true
-        duration_ms:
-          description: Round-trip time in milliseconds.
-          type: integer
-          nullable: true
-        is_successful:
-          description: True if the endpoint returned a 2xx status within 10 seconds.
+        is_enabled:
           type: boolean
-        attempt_number:
-          description: "1 for the original delivery, 2 for the automatic retry."
+        total_deliveries:
+          description: Total number of delivery attempts recorded.
           type: integer
-        delivered_at:
+        successful_deliveries:
+          description: Deliveries that received a 2xx response within 10 seconds.
+          type: integer
+        failed_deliveries:
+          description: Deliveries that timed out or received a non-2xx response.
+          type: integer
+        success_rate:
+          description: Ratio of successful to total deliveries (0–1). Null if no deliveries
+            yet.
+          format: float
+          type: number
+          nullable: true
+        last_delivery_at:
+          description: Timestamp of the most recent delivery attempt.
           format: date-time
           type: string
-        redelivery_of_id:
-          description: "ID of the original delivery if this is a manual redeliver,\
-            \ otherwise null."
-          type: integer
+          nullable: true
+        last_delivery_is_successful:
+          description: Outcome of the most recent delivery attempt.
+          type: boolean
+          nullable: true
+        avg_duration_ms:
+          description: Average round-trip time in milliseconds across all recorded
+            deliveries.
+          format: float
+          type: number
           nullable: true
       required:
-      - attempt_number
-      - delivered_at
       - endpoint_id
-      - event_type
-      - id
-      - is_successful
-      - payload
-    RegenerateSecretResponse:
-      additionalProperties: false
-      example:
-        secret: secret
-      properties:
-        secret:
-          description: New HMAC-SHA256 signing secret. Store securely — not shown
-            again.
-          type: string
-      required:
-      - secret
+      - failed_deliveries
+      - is_enabled
+      - successful_deliveries
+      - total_deliveries
+      - url
     ErrorResponse:
       additionalProperties: false
       example:

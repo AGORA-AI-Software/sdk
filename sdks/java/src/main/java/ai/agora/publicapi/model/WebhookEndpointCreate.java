@@ -51,7 +51,7 @@ import ai.agora.publicapi.JSON;
 /**
  * WebhookEndpointCreate
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-17T17:25:58.394254106Z[Etc/UTC]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-17T17:36:11.462455824Z[Etc/UTC]", comments = "Generator version: 7.12.0")
 public class WebhookEndpointCreate {
   public static final String SERIALIZED_NAME_URL = "url";
   @SerializedName(SERIALIZED_NAME_URL)

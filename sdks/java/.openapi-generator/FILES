@@ -14,11 +14,8 @@ docs/LeadUploadError.md
 docs/LeadUploadRequest.md
 docs/LeadUploadResponse.md
 docs/LeadsApi.md
-docs/RegenerateSecretResponse.md
-docs/WebhookDeliveryResponse.md
-docs/WebhookEndpointCreate.md
-docs/WebhookEndpointResponse.md
-docs/WebhookEndpointUpdate.md
+docs/WebhookEndpointHealth.md
+docs/WebhookEndpointSummary.md
 docs/WebhooksApi.md
 git_push.sh
 gradle.properties
@@ -57,8 +54,5 @@ src/main/java/ai/agora/publicapi/model/LeadInput.java
 src/main/java/ai/agora/publicapi/model/LeadUploadError.java
 src/main/java/ai/agora/publicapi/model/LeadUploadRequest.java
 src/main/java/ai/agora/publicapi/model/LeadUploadResponse.java
-src/main/java/ai/agora/publicapi/model/RegenerateSecretResponse.java
-src/main/java/ai/agora/publicapi/model/WebhookDeliveryResponse.java
-src/main/java/ai/agora/publicapi/model/WebhookEndpointCreate.java
-src/main/java/ai/agora/publicapi/model/WebhookEndpointResponse.java
-src/main/java/ai/agora/publicapi/model/WebhookEndpointUpdate.java
+src/main/java/ai/agora/publicapi/model/WebhookEndpointHealth.java
+src/main/java/ai/agora/publicapi/model/WebhookEndpointSummary.java

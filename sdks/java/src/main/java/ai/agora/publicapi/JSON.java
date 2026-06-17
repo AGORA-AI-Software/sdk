@@ -100,11 +100,8 @@ public class JSON {
         gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.LeadUploadError.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.LeadUploadRequest.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.LeadUploadResponse.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.RegenerateSecretResponse.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.WebhookDeliveryResponse.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.WebhookEndpointCreate.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.WebhookEndpointResponse.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.WebhookEndpointUpdate.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.WebhookEndpointHealth.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new ai.agora.publicapi.model.WebhookEndpointSummary.CustomTypeAdapterFactory());
         gson = gsonBuilder.create();
     }
 

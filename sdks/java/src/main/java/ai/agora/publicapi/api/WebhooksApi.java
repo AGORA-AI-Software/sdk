@@ -28,11 +28,8 @@ import java.io.IOException;
 
 
 import ai.agora.publicapi.model.ErrorResponse;
-import ai.agora.publicapi.model.RegenerateSecretResponse;
-import ai.agora.publicapi.model.WebhookDeliveryResponse;
-import ai.agora.publicapi.model.WebhookEndpointCreate;
-import ai.agora.publicapi.model.WebhookEndpointResponse;
-import ai.agora.publicapi.model.WebhookEndpointUpdate;
+import ai.agora.publicapi.model.WebhookEndpointHealth;
+import ai.agora.publicapi.model.WebhookEndpointSummary;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -78,156 +75,7 @@ public class WebhooksApi {
     }
 
     /**
-     * Build call for createWebhookEndpoint
-     * @param campaignId ID of the campaign. (required)
-     * @param webhookEndpointCreate  (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Endpoint created. The &#x60;secret&#x60; field is only returned here — store it securely. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call createWebhookEndpointCall(Integer campaignId, WebhookEndpointCreate webhookEndpointCreate, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = webhookEndpointCreate;
-
-        // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints"
-            .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        String[] localVarAuthNames = new String[] { "bearerAuth" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call createWebhookEndpointValidateBeforeCall(Integer campaignId, WebhookEndpointCreate webhookEndpointCreate, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'campaignId' is set
-        if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling createWebhookEndpoint(Async)");
-        }
-
-        // verify the required parameter 'webhookEndpointCreate' is set
-        if (webhookEndpointCreate == null) {
-            throw new ApiException("Missing the required parameter 'webhookEndpointCreate' when calling createWebhookEndpoint(Async)");
-        }
-
-        return createWebhookEndpointCall(campaignId, webhookEndpointCreate, _callback);
-
-    }
-
-    /**
-     * Create a webhook endpoint
-     * Registers a new webhook endpoint on a campaign. Returns the endpoint with its signing secret — store it securely, it will not be shown again.
-     * @param campaignId ID of the campaign. (required)
-     * @param webhookEndpointCreate  (required)
-     * @return WebhookEndpointResponse
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Endpoint created. The &#x60;secret&#x60; field is only returned here — store it securely. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public WebhookEndpointResponse createWebhookEndpoint(Integer campaignId, WebhookEndpointCreate webhookEndpointCreate) throws ApiException {
-        ApiResponse<WebhookEndpointResponse> localVarResp = createWebhookEndpointWithHttpInfo(campaignId, webhookEndpointCreate);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Create a webhook endpoint
-     * Registers a new webhook endpoint on a campaign. Returns the endpoint with its signing secret — store it securely, it will not be shown again.
-     * @param campaignId ID of the campaign. (required)
-     * @param webhookEndpointCreate  (required)
-     * @return ApiResponse&lt;WebhookEndpointResponse&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Endpoint created. The &#x60;secret&#x60; field is only returned here — store it securely. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<WebhookEndpointResponse> createWebhookEndpointWithHttpInfo(Integer campaignId, WebhookEndpointCreate webhookEndpointCreate) throws ApiException {
-        okhttp3.Call localVarCall = createWebhookEndpointValidateBeforeCall(campaignId, webhookEndpointCreate, null);
-        Type localVarReturnType = new TypeToken<WebhookEndpointResponse>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Create a webhook endpoint (asynchronously)
-     * Registers a new webhook endpoint on a campaign. Returns the endpoint with its signing secret — store it securely, it will not be shown again.
-     * @param campaignId ID of the campaign. (required)
-     * @param webhookEndpointCreate  (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Endpoint created. The &#x60;secret&#x60; field is only returned here — store it securely. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call createWebhookEndpointAsync(Integer campaignId, WebhookEndpointCreate webhookEndpointCreate, final ApiCallback<WebhookEndpointResponse> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = createWebhookEndpointValidateBeforeCall(campaignId, webhookEndpointCreate, _callback);
-        Type localVarReturnType = new TypeToken<WebhookEndpointResponse>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for deleteWebhookEndpoint
+     * Build call for getWebhookEndpointHealth
      * @param campaignId ID of the campaign. (required)
      * @param endpointId ID of the webhook endpoint. (required)
      * @param _callback Callback for upload/download progress
@@ -237,13 +85,13 @@ public class WebhooksApi {
      <table border="1">
        <caption>Response Details</caption>
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 204 </td><td> Endpoint deleted. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Delivery health snapshot. </td><td>  -  </td></tr>
         <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
         <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call deleteWebhookEndpointCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
+    public okhttp3.Call getWebhookEndpointHealthCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
         String basePath = null;
         // Operation Servers
         String[] localBasePaths = new String[] {  };
@@ -260,7 +108,7 @@ public class WebhooksApi {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}"
+        String localVarPath = "/webhooks/{campaign_id}/endpoints/{endpoint_id}/health"
             .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()))
             .replace("{" + "endpoint_id" + "}", localVarApiClient.escapeString(endpointId.toString()));
 
@@ -269,161 +117,6 @@ public class WebhooksApi {
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        String[] localVarAuthNames = new String[] { "bearerAuth" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call deleteWebhookEndpointValidateBeforeCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'campaignId' is set
-        if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling deleteWebhookEndpoint(Async)");
-        }
-
-        // verify the required parameter 'endpointId' is set
-        if (endpointId == null) {
-            throw new ApiException("Missing the required parameter 'endpointId' when calling deleteWebhookEndpoint(Async)");
-        }
-
-        return deleteWebhookEndpointCall(campaignId, endpointId, _callback);
-
-    }
-
-    /**
-     * Delete a webhook endpoint
-     * Permanently deletes a webhook endpoint and all its delivery history.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 204 </td><td> Endpoint deleted. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public void deleteWebhookEndpoint(Integer campaignId, Integer endpointId) throws ApiException {
-        deleteWebhookEndpointWithHttpInfo(campaignId, endpointId);
-    }
-
-    /**
-     * Delete a webhook endpoint
-     * Permanently deletes a webhook endpoint and all its delivery history.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @return ApiResponse&lt;Void&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 204 </td><td> Endpoint deleted. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<Void> deleteWebhookEndpointWithHttpInfo(Integer campaignId, Integer endpointId) throws ApiException {
-        okhttp3.Call localVarCall = deleteWebhookEndpointValidateBeforeCall(campaignId, endpointId, null);
-        return localVarApiClient.execute(localVarCall);
-    }
-
-    /**
-     * Delete a webhook endpoint (asynchronously)
-     * Permanently deletes a webhook endpoint and all its delivery history.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 204 </td><td> Endpoint deleted. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call deleteWebhookEndpointAsync(Integer campaignId, Integer endpointId, final ApiCallback<Void> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = deleteWebhookEndpointValidateBeforeCall(campaignId, endpointId, _callback);
-        localVarApiClient.executeAsync(localVarCall, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for listWebhookDeliveries
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param success Filter by delivery outcome. Omit to return all deliveries. (optional)
-     * @param limit Maximum number of deliveries to return. (optional, default to 50)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> List of deliveries, most recent first. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call listWebhookDeliveriesCall(Integer campaignId, Integer endpointId, Boolean success, Integer limit, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = null;
-
-        // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/deliveries"
-            .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()))
-            .replace("{" + "endpoint_id" + "}", localVarApiClient.escapeString(endpointId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        if (success != null) {
-            localVarQueryParams.addAll(localVarApiClient.parameterToPair("success", success));
-        }
-
-        if (limit != null) {
-            localVarQueryParams.addAll(localVarApiClient.parameterToPair("limit", limit));
-        }
 
         final String[] localVarAccepts = {
             "application/json"
@@ -445,77 +138,71 @@ public class WebhooksApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private okhttp3.Call listWebhookDeliveriesValidateBeforeCall(Integer campaignId, Integer endpointId, Boolean success, Integer limit, final ApiCallback _callback) throws ApiException {
+    private okhttp3.Call getWebhookEndpointHealthValidateBeforeCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
         // verify the required parameter 'campaignId' is set
         if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling listWebhookDeliveries(Async)");
+            throw new ApiException("Missing the required parameter 'campaignId' when calling getWebhookEndpointHealth(Async)");
         }
 
         // verify the required parameter 'endpointId' is set
         if (endpointId == null) {
-            throw new ApiException("Missing the required parameter 'endpointId' when calling listWebhookDeliveries(Async)");
+            throw new ApiException("Missing the required parameter 'endpointId' when calling getWebhookEndpointHealth(Async)");
         }
 
-        return listWebhookDeliveriesCall(campaignId, endpointId, success, limit, _callback);
+        return getWebhookEndpointHealthCall(campaignId, endpointId, _callback);
 
     }
 
     /**
-     * List deliveries for a webhook endpoint
-     * Returns the delivery history for a webhook endpoint, ordered by most recent first.
+     * Get delivery health for a webhook endpoint
+     * Returns a delivery health snapshot for the endpoint: total/successful/failed delivery counts, success rate, last delivery timestamp, and average response time. Use this to monitor the reliability of your webhook integration — alert on a dropping success rate or a stale &#x60;last_delivery_at&#x60;. 
      * @param campaignId ID of the campaign. (required)
      * @param endpointId ID of the webhook endpoint. (required)
-     * @param success Filter by delivery outcome. Omit to return all deliveries. (optional)
-     * @param limit Maximum number of deliveries to return. (optional, default to 50)
-     * @return List&lt;WebhookDeliveryResponse&gt;
+     * @return WebhookEndpointHealth
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table border="1">
        <caption>Response Details</caption>
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> List of deliveries, most recent first. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Delivery health snapshot. </td><td>  -  </td></tr>
         <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
         <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public List<WebhookDeliveryResponse> listWebhookDeliveries(Integer campaignId, Integer endpointId, Boolean success, Integer limit) throws ApiException {
-        ApiResponse<List<WebhookDeliveryResponse>> localVarResp = listWebhookDeliveriesWithHttpInfo(campaignId, endpointId, success, limit);
+    public WebhookEndpointHealth getWebhookEndpointHealth(Integer campaignId, Integer endpointId) throws ApiException {
+        ApiResponse<WebhookEndpointHealth> localVarResp = getWebhookEndpointHealthWithHttpInfo(campaignId, endpointId);
         return localVarResp.getData();
     }
 
     /**
-     * List deliveries for a webhook endpoint
-     * Returns the delivery history for a webhook endpoint, ordered by most recent first.
+     * Get delivery health for a webhook endpoint
+     * Returns a delivery health snapshot for the endpoint: total/successful/failed delivery counts, success rate, last delivery timestamp, and average response time. Use this to monitor the reliability of your webhook integration — alert on a dropping success rate or a stale &#x60;last_delivery_at&#x60;. 
      * @param campaignId ID of the campaign. (required)
      * @param endpointId ID of the webhook endpoint. (required)
-     * @param success Filter by delivery outcome. Omit to return all deliveries. (optional)
-     * @param limit Maximum number of deliveries to return. (optional, default to 50)
-     * @return ApiResponse&lt;List&lt;WebhookDeliveryResponse&gt;&gt;
+     * @return ApiResponse&lt;WebhookEndpointHealth&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table border="1">
        <caption>Response Details</caption>
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> List of deliveries, most recent first. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Delivery health snapshot. </td><td>  -  </td></tr>
         <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
         <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<List<WebhookDeliveryResponse>> listWebhookDeliveriesWithHttpInfo(Integer campaignId, Integer endpointId, Boolean success, Integer limit) throws ApiException {
-        okhttp3.Call localVarCall = listWebhookDeliveriesValidateBeforeCall(campaignId, endpointId, success, limit, null);
-        Type localVarReturnType = new TypeToken<List<WebhookDeliveryResponse>>(){}.getType();
+    public ApiResponse<WebhookEndpointHealth> getWebhookEndpointHealthWithHttpInfo(Integer campaignId, Integer endpointId) throws ApiException {
+        okhttp3.Call localVarCall = getWebhookEndpointHealthValidateBeforeCall(campaignId, endpointId, null);
+        Type localVarReturnType = new TypeToken<WebhookEndpointHealth>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 
     /**
-     * List deliveries for a webhook endpoint (asynchronously)
-     * Returns the delivery history for a webhook endpoint, ordered by most recent first.
+     * Get delivery health for a webhook endpoint (asynchronously)
+     * Returns a delivery health snapshot for the endpoint: total/successful/failed delivery counts, success rate, last delivery timestamp, and average response time. Use this to monitor the reliability of your webhook integration — alert on a dropping success rate or a stale &#x60;last_delivery_at&#x60;. 
      * @param campaignId ID of the campaign. (required)
      * @param endpointId ID of the webhook endpoint. (required)
-     * @param success Filter by delivery outcome. Omit to return all deliveries. (optional)
-     * @param limit Maximum number of deliveries to return. (optional, default to 50)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
@@ -523,16 +210,16 @@ public class WebhooksApi {
      <table border="1">
        <caption>Response Details</caption>
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> List of deliveries, most recent first. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Delivery health snapshot. </td><td>  -  </td></tr>
         <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
         <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call listWebhookDeliveriesAsync(Integer campaignId, Integer endpointId, Boolean success, Integer limit, final ApiCallback<List<WebhookDeliveryResponse>> _callback) throws ApiException {
+    public okhttp3.Call getWebhookEndpointHealthAsync(Integer campaignId, Integer endpointId, final ApiCallback<WebhookEndpointHealth> _callback) throws ApiException {
 
-        okhttp3.Call localVarCall = listWebhookDeliveriesValidateBeforeCall(campaignId, endpointId, success, limit, _callback);
-        Type localVarReturnType = new TypeToken<List<WebhookDeliveryResponse>>(){}.getType();
+        okhttp3.Call localVarCall = getWebhookEndpointHealthValidateBeforeCall(campaignId, endpointId, _callback);
+        Type localVarReturnType = new TypeToken<WebhookEndpointHealth>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
@@ -568,7 +255,7 @@ public class WebhooksApi {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints"
+        String localVarPath = "/webhooks/{campaign_id}/endpoints"
             .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
@@ -609,9 +296,9 @@ public class WebhooksApi {
 
     /**
      * List webhook endpoints
-     * Returns all webhook endpoints registered on a campaign.
+     * Returns all webhook endpoints configured on a campaign. Does not include signing secrets — use the Agora dashboard to manage secrets.
      * @param campaignId ID of the campaign. (required)
-     * @return List&lt;WebhookEndpointResponse&gt;
+     * @return List&lt;WebhookEndpointSummary&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table border="1">
@@ -622,16 +309,16 @@ public class WebhooksApi {
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public List<WebhookEndpointResponse> listWebhookEndpoints(Integer campaignId) throws ApiException {
-        ApiResponse<List<WebhookEndpointResponse>> localVarResp = listWebhookEndpointsWithHttpInfo(campaignId);
+    public List<WebhookEndpointSummary> listWebhookEndpoints(Integer campaignId) throws ApiException {
+        ApiResponse<List<WebhookEndpointSummary>> localVarResp = listWebhookEndpointsWithHttpInfo(campaignId);
         return localVarResp.getData();
     }
 
     /**
      * List webhook endpoints
-     * Returns all webhook endpoints registered on a campaign.
+     * Returns all webhook endpoints configured on a campaign. Does not include signing secrets — use the Agora dashboard to manage secrets.
      * @param campaignId ID of the campaign. (required)
-     * @return ApiResponse&lt;List&lt;WebhookEndpointResponse&gt;&gt;
+     * @return ApiResponse&lt;List&lt;WebhookEndpointSummary&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table border="1">
@@ -642,15 +329,15 @@ public class WebhooksApi {
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<List<WebhookEndpointResponse>> listWebhookEndpointsWithHttpInfo(Integer campaignId) throws ApiException {
+    public ApiResponse<List<WebhookEndpointSummary>> listWebhookEndpointsWithHttpInfo(Integer campaignId) throws ApiException {
         okhttp3.Call localVarCall = listWebhookEndpointsValidateBeforeCall(campaignId, null);
-        Type localVarReturnType = new TypeToken<List<WebhookEndpointResponse>>(){}.getType();
+        Type localVarReturnType = new TypeToken<List<WebhookEndpointSummary>>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 
     /**
      * List webhook endpoints (asynchronously)
-     * Returns all webhook endpoints registered on a campaign.
+     * Returns all webhook endpoints configured on a campaign. Does not include signing secrets — use the Agora dashboard to manage secrets.
      * @param campaignId ID of the campaign. (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
@@ -664,10 +351,10 @@ public class WebhooksApi {
         <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call listWebhookEndpointsAsync(Integer campaignId, final ApiCallback<List<WebhookEndpointResponse>> _callback) throws ApiException {
+    public okhttp3.Call listWebhookEndpointsAsync(Integer campaignId, final ApiCallback<List<WebhookEndpointSummary>> _callback) throws ApiException {
 
         okhttp3.Call localVarCall = listWebhookEndpointsValidateBeforeCall(campaignId, _callback);
-        Type localVarReturnType = new TypeToken<List<WebhookEndpointResponse>>(){}.getType();
+        Type localVarReturnType = new TypeToken<List<WebhookEndpointSummary>>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
@@ -703,7 +390,7 @@ public class WebhooksApi {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/events"
+        String localVarPath = "/webhooks/{campaign_id}/events"
             .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
@@ -803,616 +490,6 @@ public class WebhooksApi {
 
         okhttp3.Call localVarCall = listWebhookEventTypesValidateBeforeCall(campaignId, _callback);
         Type localVarReturnType = new TypeToken<List<String>>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for redeliverWebhookDelivery
-     * @param campaignId ID of the campaign. (required)
-     * @param deliveryId ID of the delivery to redeliver. (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New delivery record for the redelivery attempt. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call redeliverWebhookDeliveryCall(Integer campaignId, Integer deliveryId, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = null;
-
-        // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/deliveries/{delivery_id}/redeliver"
-            .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()))
-            .replace("{" + "delivery_id" + "}", localVarApiClient.escapeString(deliveryId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        String[] localVarAuthNames = new String[] { "bearerAuth" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call redeliverWebhookDeliveryValidateBeforeCall(Integer campaignId, Integer deliveryId, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'campaignId' is set
-        if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling redeliverWebhookDelivery(Async)");
-        }
-
-        // verify the required parameter 'deliveryId' is set
-        if (deliveryId == null) {
-            throw new ApiException("Missing the required parameter 'deliveryId' when calling redeliverWebhookDelivery(Async)");
-        }
-
-        return redeliverWebhookDeliveryCall(campaignId, deliveryId, _callback);
-
-    }
-
-    /**
-     * Redeliver a webhook delivery
-     * Re-sends a previously delivered (or failed) event to the original endpoint. Creates a new delivery record linked to the original via &#x60;redelivery_of_id&#x60;.
-     * @param campaignId ID of the campaign. (required)
-     * @param deliveryId ID of the delivery to redeliver. (required)
-     * @return WebhookDeliveryResponse
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New delivery record for the redelivery attempt. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public WebhookDeliveryResponse redeliverWebhookDelivery(Integer campaignId, Integer deliveryId) throws ApiException {
-        ApiResponse<WebhookDeliveryResponse> localVarResp = redeliverWebhookDeliveryWithHttpInfo(campaignId, deliveryId);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Redeliver a webhook delivery
-     * Re-sends a previously delivered (or failed) event to the original endpoint. Creates a new delivery record linked to the original via &#x60;redelivery_of_id&#x60;.
-     * @param campaignId ID of the campaign. (required)
-     * @param deliveryId ID of the delivery to redeliver. (required)
-     * @return ApiResponse&lt;WebhookDeliveryResponse&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New delivery record for the redelivery attempt. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<WebhookDeliveryResponse> redeliverWebhookDeliveryWithHttpInfo(Integer campaignId, Integer deliveryId) throws ApiException {
-        okhttp3.Call localVarCall = redeliverWebhookDeliveryValidateBeforeCall(campaignId, deliveryId, null);
-        Type localVarReturnType = new TypeToken<WebhookDeliveryResponse>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Redeliver a webhook delivery (asynchronously)
-     * Re-sends a previously delivered (or failed) event to the original endpoint. Creates a new delivery record linked to the original via &#x60;redelivery_of_id&#x60;.
-     * @param campaignId ID of the campaign. (required)
-     * @param deliveryId ID of the delivery to redeliver. (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New delivery record for the redelivery attempt. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call redeliverWebhookDeliveryAsync(Integer campaignId, Integer deliveryId, final ApiCallback<WebhookDeliveryResponse> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = redeliverWebhookDeliveryValidateBeforeCall(campaignId, deliveryId, _callback);
-        Type localVarReturnType = new TypeToken<WebhookDeliveryResponse>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for regenerateWebhookSecret
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New signing secret. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call regenerateWebhookSecretCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = null;
-
-        // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/regenerate-secret"
-            .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()))
-            .replace("{" + "endpoint_id" + "}", localVarApiClient.escapeString(endpointId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        String[] localVarAuthNames = new String[] { "bearerAuth" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call regenerateWebhookSecretValidateBeforeCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'campaignId' is set
-        if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling regenerateWebhookSecret(Async)");
-        }
-
-        // verify the required parameter 'endpointId' is set
-        if (endpointId == null) {
-            throw new ApiException("Missing the required parameter 'endpointId' when calling regenerateWebhookSecret(Async)");
-        }
-
-        return regenerateWebhookSecretCall(campaignId, endpointId, _callback);
-
-    }
-
-    /**
-     * Regenerate the signing secret
-     * Rotates the HMAC-SHA256 signing secret for a webhook endpoint. The old secret stops working immediately. Store the new secret securely — it will not be shown again.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @return RegenerateSecretResponse
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New signing secret. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public RegenerateSecretResponse regenerateWebhookSecret(Integer campaignId, Integer endpointId) throws ApiException {
-        ApiResponse<RegenerateSecretResponse> localVarResp = regenerateWebhookSecretWithHttpInfo(campaignId, endpointId);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Regenerate the signing secret
-     * Rotates the HMAC-SHA256 signing secret for a webhook endpoint. The old secret stops working immediately. Store the new secret securely — it will not be shown again.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @return ApiResponse&lt;RegenerateSecretResponse&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New signing secret. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<RegenerateSecretResponse> regenerateWebhookSecretWithHttpInfo(Integer campaignId, Integer endpointId) throws ApiException {
-        okhttp3.Call localVarCall = regenerateWebhookSecretValidateBeforeCall(campaignId, endpointId, null);
-        Type localVarReturnType = new TypeToken<RegenerateSecretResponse>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Regenerate the signing secret (asynchronously)
-     * Rotates the HMAC-SHA256 signing secret for a webhook endpoint. The old secret stops working immediately. Store the new secret securely — it will not be shown again.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> New signing secret. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call regenerateWebhookSecretAsync(Integer campaignId, Integer endpointId, final ApiCallback<RegenerateSecretResponse> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = regenerateWebhookSecretValidateBeforeCall(campaignId, endpointId, _callback);
-        Type localVarReturnType = new TypeToken<RegenerateSecretResponse>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for testWebhookEndpoint
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Delivery record for the test ping. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call testWebhookEndpointCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = null;
-
-        // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/test"
-            .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()))
-            .replace("{" + "endpoint_id" + "}", localVarApiClient.escapeString(endpointId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        String[] localVarAuthNames = new String[] { "bearerAuth" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call testWebhookEndpointValidateBeforeCall(Integer campaignId, Integer endpointId, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'campaignId' is set
-        if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling testWebhookEndpoint(Async)");
-        }
-
-        // verify the required parameter 'endpointId' is set
-        if (endpointId == null) {
-            throw new ApiException("Missing the required parameter 'endpointId' when calling testWebhookEndpoint(Async)");
-        }
-
-        return testWebhookEndpointCall(campaignId, endpointId, _callback);
-
-    }
-
-    /**
-     * Send a test ping to a webhook endpoint
-     * Sends a synthetic &#x60;ping&#x60; event to the endpoint URL and records the delivery result. Useful for verifying connectivity and signature verification before going live.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @return WebhookDeliveryResponse
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Delivery record for the test ping. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public WebhookDeliveryResponse testWebhookEndpoint(Integer campaignId, Integer endpointId) throws ApiException {
-        ApiResponse<WebhookDeliveryResponse> localVarResp = testWebhookEndpointWithHttpInfo(campaignId, endpointId);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Send a test ping to a webhook endpoint
-     * Sends a synthetic &#x60;ping&#x60; event to the endpoint URL and records the delivery result. Useful for verifying connectivity and signature verification before going live.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @return ApiResponse&lt;WebhookDeliveryResponse&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Delivery record for the test ping. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<WebhookDeliveryResponse> testWebhookEndpointWithHttpInfo(Integer campaignId, Integer endpointId) throws ApiException {
-        okhttp3.Call localVarCall = testWebhookEndpointValidateBeforeCall(campaignId, endpointId, null);
-        Type localVarReturnType = new TypeToken<WebhookDeliveryResponse>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Send a test ping to a webhook endpoint (asynchronously)
-     * Sends a synthetic &#x60;ping&#x60; event to the endpoint URL and records the delivery result. Useful for verifying connectivity and signature verification before going live.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Delivery record for the test ping. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call testWebhookEndpointAsync(Integer campaignId, Integer endpointId, final ApiCallback<WebhookDeliveryResponse> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = testWebhookEndpointValidateBeforeCall(campaignId, endpointId, _callback);
-        Type localVarReturnType = new TypeToken<WebhookDeliveryResponse>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for updateWebhookEndpoint
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param webhookEndpointUpdate  (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Updated endpoint. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call updateWebhookEndpointCall(Integer campaignId, Integer endpointId, WebhookEndpointUpdate webhookEndpointUpdate, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = webhookEndpointUpdate;
-
-        // create path and map variables
-        String localVarPath = "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}"
-            .replace("{" + "campaign_id" + "}", localVarApiClient.escapeString(campaignId.toString()))
-            .replace("{" + "endpoint_id" + "}", localVarApiClient.escapeString(endpointId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        String[] localVarAuthNames = new String[] { "bearerAuth" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "PATCH", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call updateWebhookEndpointValidateBeforeCall(Integer campaignId, Integer endpointId, WebhookEndpointUpdate webhookEndpointUpdate, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'campaignId' is set
-        if (campaignId == null) {
-            throw new ApiException("Missing the required parameter 'campaignId' when calling updateWebhookEndpoint(Async)");
-        }
-
-        // verify the required parameter 'endpointId' is set
-        if (endpointId == null) {
-            throw new ApiException("Missing the required parameter 'endpointId' when calling updateWebhookEndpoint(Async)");
-        }
-
-        // verify the required parameter 'webhookEndpointUpdate' is set
-        if (webhookEndpointUpdate == null) {
-            throw new ApiException("Missing the required parameter 'webhookEndpointUpdate' when calling updateWebhookEndpoint(Async)");
-        }
-
-        return updateWebhookEndpointCall(campaignId, endpointId, webhookEndpointUpdate, _callback);
-
-    }
-
-    /**
-     * Update a webhook endpoint
-     * Updates one or more fields on an existing webhook endpoint. Omitted fields are unchanged.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param webhookEndpointUpdate  (required)
-     * @return WebhookEndpointResponse
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Updated endpoint. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public WebhookEndpointResponse updateWebhookEndpoint(Integer campaignId, Integer endpointId, WebhookEndpointUpdate webhookEndpointUpdate) throws ApiException {
-        ApiResponse<WebhookEndpointResponse> localVarResp = updateWebhookEndpointWithHttpInfo(campaignId, endpointId, webhookEndpointUpdate);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Update a webhook endpoint
-     * Updates one or more fields on an existing webhook endpoint. Omitted fields are unchanged.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param webhookEndpointUpdate  (required)
-     * @return ApiResponse&lt;WebhookEndpointResponse&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Updated endpoint. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<WebhookEndpointResponse> updateWebhookEndpointWithHttpInfo(Integer campaignId, Integer endpointId, WebhookEndpointUpdate webhookEndpointUpdate) throws ApiException {
-        okhttp3.Call localVarCall = updateWebhookEndpointValidateBeforeCall(campaignId, endpointId, webhookEndpointUpdate, null);
-        Type localVarReturnType = new TypeToken<WebhookEndpointResponse>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Update a webhook endpoint (asynchronously)
-     * Updates one or more fields on an existing webhook endpoint. Omitted fields are unchanged.
-     * @param campaignId ID of the campaign. (required)
-     * @param endpointId ID of the webhook endpoint. (required)
-     * @param webhookEndpointUpdate  (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Updated endpoint. </td><td>  -  </td></tr>
-        <tr><td> 400 </td><td> Invalid event type or request body. </td><td>  -  </td></tr>
-        <tr><td> 401 </td><td> Missing, invalid, or expired bearer token. </td><td>  -  </td></tr>
-        <tr><td> 403 </td><td> Bearer token is not authorized for this campaign. </td><td>  -  </td></tr>
-        <tr><td> 404 </td><td> Resource not found or does not belong to this campaign. </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call updateWebhookEndpointAsync(Integer campaignId, Integer endpointId, WebhookEndpointUpdate webhookEndpointUpdate, final ApiCallback<WebhookEndpointResponse> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = updateWebhookEndpointValidateBeforeCall(campaignId, endpointId, webhookEndpointUpdate, _callback);
-        Type localVarReturnType = new TypeToken<WebhookEndpointResponse>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }

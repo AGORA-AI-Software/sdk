@@ -50,10 +50,10 @@ import java.util.Set;
 import ai.agora.publicapi.JSON;
 
 /**
- * WebhookEndpointResponse
+ * WebhookEndpointSummary
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-17T17:36:11.462455824Z[Etc/UTC]", comments = "Generator version: 7.12.0")
-public class WebhookEndpointResponse {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-06-17T17:42:51.106071275Z[Etc/UTC]", comments = "Generator version: 7.12.0")
+public class WebhookEndpointSummary {
   public static final String SERIALIZED_NAME_ID = "id";
   @SerializedName(SERIALIZED_NAME_ID)
   @javax.annotation.Nonnull
@@ -89,20 +89,15 @@ public class WebhookEndpointResponse {
   @javax.annotation.Nonnull
   private OffsetDateTime createdAt;
 
-  public static final String SERIALIZED_NAME_SECRET = "secret";
-  @SerializedName(SERIALIZED_NAME_SECRET)
-  @javax.annotation.Nullable
-  private String secret;
-
   public static final String SERIALIZED_NAME_LAST_DELIVERY_IS_SUCCESSFUL = "last_delivery_is_successful";
   @SerializedName(SERIALIZED_NAME_LAST_DELIVERY_IS_SUCCESSFUL)
   @javax.annotation.Nullable
   private Boolean lastDeliveryIsSuccessful;
 
-  public WebhookEndpointResponse() {
+  public WebhookEndpointSummary() {
   }
 
-  public WebhookEndpointResponse id(@javax.annotation.Nonnull Integer id) {
+  public WebhookEndpointSummary id(@javax.annotation.Nonnull Integer id) {
     this.id = id;
     return this;
   }
@@ -121,7 +116,7 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse campaignId(@javax.annotation.Nonnull Integer campaignId) {
+  public WebhookEndpointSummary campaignId(@javax.annotation.Nonnull Integer campaignId) {
     this.campaignId = campaignId;
     return this;
   }
@@ -140,13 +135,13 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse url(@javax.annotation.Nonnull URI url) {
+  public WebhookEndpointSummary url(@javax.annotation.Nonnull URI url) {
     this.url = url;
     return this;
   }
 
   /**
-   * Get url
+   * Destination URL events are delivered to.
    * @return url
    */
   @javax.annotation.Nonnull
@@ -159,7 +154,7 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse description(@javax.annotation.Nullable String description) {
+  public WebhookEndpointSummary description(@javax.annotation.Nullable String description) {
     this.description = description;
     return this;
   }
@@ -178,12 +173,12 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse subscribedEvents(@javax.annotation.Nonnull List<String> subscribedEvents) {
+  public WebhookEndpointSummary subscribedEvents(@javax.annotation.Nonnull List<String> subscribedEvents) {
     this.subscribedEvents = subscribedEvents;
     return this;
   }
 
-  public WebhookEndpointResponse addSubscribedEventsItem(String subscribedEventsItem) {
+  public WebhookEndpointSummary addSubscribedEventsItem(String subscribedEventsItem) {
     if (this.subscribedEvents == null) {
       this.subscribedEvents = new ArrayList<>();
     }
@@ -192,7 +187,7 @@ public class WebhookEndpointResponse {
   }
 
   /**
-   * Get subscribedEvents
+   * Event types this endpoint is subscribed to.
    * @return subscribedEvents
    */
   @javax.annotation.Nonnull
@@ -205,7 +200,7 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse isEnabled(@javax.annotation.Nonnull Boolean isEnabled) {
+  public WebhookEndpointSummary isEnabled(@javax.annotation.Nonnull Boolean isEnabled) {
     this.isEnabled = isEnabled;
     return this;
   }
@@ -224,7 +219,7 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse createdAt(@javax.annotation.Nonnull OffsetDateTime createdAt) {
+  public WebhookEndpointSummary createdAt(@javax.annotation.Nonnull OffsetDateTime createdAt) {
     this.createdAt = createdAt;
     return this;
   }
@@ -243,26 +238,7 @@ public class WebhookEndpointResponse {
   }
 
 
-  public WebhookEndpointResponse secret(@javax.annotation.Nullable String secret) {
-    this.secret = secret;
-    return this;
-  }
-
-  /**
-   * Signing secret. Only returned on creation — store it securely.
-   * @return secret
-   */
-  @javax.annotation.Nullable
-  public String getSecret() {
-    return secret;
-  }
-
-  public void setSecret(@javax.annotation.Nullable String secret) {
-    this.secret = secret;
-  }
-
-
-  public WebhookEndpointResponse lastDeliveryIsSuccessful(@javax.annotation.Nullable Boolean lastDeliveryIsSuccessful) {
+  public WebhookEndpointSummary lastDeliveryIsSuccessful(@javax.annotation.Nullable Boolean lastDeliveryIsSuccessful) {
     this.lastDeliveryIsSuccessful = lastDeliveryIsSuccessful;
     return this;
   }
@@ -290,27 +266,26 @@ public class WebhookEndpointResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WebhookEndpointResponse webhookEndpointResponse = (WebhookEndpointResponse) o;
-    return Objects.equals(this.id, webhookEndpointResponse.id) &&
-        Objects.equals(this.campaignId, webhookEndpointResponse.campaignId) &&
-        Objects.equals(this.url, webhookEndpointResponse.url) &&
-        Objects.equals(this.description, webhookEndpointResponse.description) &&
-        Objects.equals(this.subscribedEvents, webhookEndpointResponse.subscribedEvents) &&
-        Objects.equals(this.isEnabled, webhookEndpointResponse.isEnabled) &&
-        Objects.equals(this.createdAt, webhookEndpointResponse.createdAt) &&
-        Objects.equals(this.secret, webhookEndpointResponse.secret) &&
-        Objects.equals(this.lastDeliveryIsSuccessful, webhookEndpointResponse.lastDeliveryIsSuccessful);
+    WebhookEndpointSummary webhookEndpointSummary = (WebhookEndpointSummary) o;
+    return Objects.equals(this.id, webhookEndpointSummary.id) &&
+        Objects.equals(this.campaignId, webhookEndpointSummary.campaignId) &&
+        Objects.equals(this.url, webhookEndpointSummary.url) &&
+        Objects.equals(this.description, webhookEndpointSummary.description) &&
+        Objects.equals(this.subscribedEvents, webhookEndpointSummary.subscribedEvents) &&
+        Objects.equals(this.isEnabled, webhookEndpointSummary.isEnabled) &&
+        Objects.equals(this.createdAt, webhookEndpointSummary.createdAt) &&
+        Objects.equals(this.lastDeliveryIsSuccessful, webhookEndpointSummary.lastDeliveryIsSuccessful);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, campaignId, url, description, subscribedEvents, isEnabled, createdAt, secret, lastDeliveryIsSuccessful);
+    return Objects.hash(id, campaignId, url, description, subscribedEvents, isEnabled, createdAt, lastDeliveryIsSuccessful);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class WebhookEndpointResponse {\n");
+    sb.append("class WebhookEndpointSummary {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    campaignId: ").append(toIndentedString(campaignId)).append("\n");
     sb.append("    url: ").append(toIndentedString(url)).append("\n");
@@ -318,7 +293,6 @@ public class WebhookEndpointResponse {
     sb.append("    subscribedEvents: ").append(toIndentedString(subscribedEvents)).append("\n");
     sb.append("    isEnabled: ").append(toIndentedString(isEnabled)).append("\n");
     sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
-    sb.append("    secret: ").append(toIndentedString(secret)).append("\n");
     sb.append("    lastDeliveryIsSuccessful: ").append(toIndentedString(lastDeliveryIsSuccessful)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -349,7 +323,6 @@ public class WebhookEndpointResponse {
     openapiFields.add("subscribed_events");
     openapiFields.add("is_enabled");
     openapiFields.add("created_at");
-    openapiFields.add("secret");
     openapiFields.add("last_delivery_is_successful");
 
     // a set of required properties/fields (JSON key names)
@@ -366,25 +339,25 @@ public class WebhookEndpointResponse {
    * Validates the JSON Element and throws an exception if issues found
    *
    * @param jsonElement JSON Element
-   * @throws IOException if the JSON Element is invalid with respect to WebhookEndpointResponse
+   * @throws IOException if the JSON Element is invalid with respect to WebhookEndpointSummary
    */
   public static void validateJsonElement(JsonElement jsonElement) throws IOException {
       if (jsonElement == null) {
-        if (!WebhookEndpointResponse.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
-          throw new IllegalArgumentException(String.format("The required field(s) %s in WebhookEndpointResponse is not found in the empty JSON string", WebhookEndpointResponse.openapiRequiredFields.toString()));
+        if (!WebhookEndpointSummary.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
+          throw new IllegalArgumentException(String.format("The required field(s) %s in WebhookEndpointSummary is not found in the empty JSON string", WebhookEndpointSummary.openapiRequiredFields.toString()));
         }
       }
 
       Set<Map.Entry<String, JsonElement>> entries = jsonElement.getAsJsonObject().entrySet();
       // check to see if the JSON string contains additional fields
       for (Map.Entry<String, JsonElement> entry : entries) {
-        if (!WebhookEndpointResponse.openapiFields.contains(entry.getKey())) {
-          throw new IllegalArgumentException(String.format("The field `%s` in the JSON string is not defined in the `WebhookEndpointResponse` properties. JSON: %s", entry.getKey(), jsonElement.toString()));
+        if (!WebhookEndpointSummary.openapiFields.contains(entry.getKey())) {
+          throw new IllegalArgumentException(String.format("The field `%s` in the JSON string is not defined in the `WebhookEndpointSummary` properties. JSON: %s", entry.getKey(), jsonElement.toString()));
         }
       }
 
       // check to make sure all required properties/fields are present in the JSON string
-      for (String requiredField : WebhookEndpointResponse.openapiRequiredFields) {
+      for (String requiredField : WebhookEndpointSummary.openapiRequiredFields) {
         if (jsonElement.getAsJsonObject().get(requiredField) == null) {
           throw new IllegalArgumentException(String.format("The required field `%s` is not found in the JSON string: %s", requiredField, jsonElement.toString()));
         }
@@ -402,31 +375,28 @@ public class WebhookEndpointResponse {
       } else if (!jsonObj.get("subscribed_events").isJsonArray()) {
         throw new IllegalArgumentException(String.format("Expected the field `subscribed_events` to be an array in the JSON string but got `%s`", jsonObj.get("subscribed_events").toString()));
       }
-      if ((jsonObj.get("secret") != null && !jsonObj.get("secret").isJsonNull()) && !jsonObj.get("secret").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format("Expected the field `secret` to be a primitive type in the JSON string but got `%s`", jsonObj.get("secret").toString()));
-      }
   }
 
   public static class CustomTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-       if (!WebhookEndpointResponse.class.isAssignableFrom(type.getRawType())) {
-         return null; // this class only serializes 'WebhookEndpointResponse' and its subtypes
+       if (!WebhookEndpointSummary.class.isAssignableFrom(type.getRawType())) {
+         return null; // this class only serializes 'WebhookEndpointSummary' and its subtypes
        }
        final TypeAdapter<JsonElement> elementAdapter = gson.getAdapter(JsonElement.class);
-       final TypeAdapter<WebhookEndpointResponse> thisAdapter
-                        = gson.getDelegateAdapter(this, TypeToken.get(WebhookEndpointResponse.class));
+       final TypeAdapter<WebhookEndpointSummary> thisAdapter
+                        = gson.getDelegateAdapter(this, TypeToken.get(WebhookEndpointSummary.class));
 
-       return (TypeAdapter<T>) new TypeAdapter<WebhookEndpointResponse>() {
+       return (TypeAdapter<T>) new TypeAdapter<WebhookEndpointSummary>() {
            @Override
-           public void write(JsonWriter out, WebhookEndpointResponse value) throws IOException {
+           public void write(JsonWriter out, WebhookEndpointSummary value) throws IOException {
              JsonObject obj = thisAdapter.toJsonTree(value).getAsJsonObject();
              elementAdapter.write(out, obj);
            }
 
            @Override
-           public WebhookEndpointResponse read(JsonReader in) throws IOException {
+           public WebhookEndpointSummary read(JsonReader in) throws IOException {
              JsonElement jsonElement = elementAdapter.read(in);
              validateJsonElement(jsonElement);
              return thisAdapter.fromJsonTree(jsonElement);
@@ -437,18 +407,18 @@ public class WebhookEndpointResponse {
   }
 
   /**
-   * Create an instance of WebhookEndpointResponse given an JSON string
+   * Create an instance of WebhookEndpointSummary given an JSON string
    *
    * @param jsonString JSON string
-   * @return An instance of WebhookEndpointResponse
-   * @throws IOException if the JSON string is invalid with respect to WebhookEndpointResponse
+   * @return An instance of WebhookEndpointSummary
+   * @throws IOException if the JSON string is invalid with respect to WebhookEndpointSummary
    */
-  public static WebhookEndpointResponse fromJson(String jsonString) throws IOException {
-    return JSON.getGson().fromJson(jsonString, WebhookEndpointResponse.class);
+  public static WebhookEndpointSummary fromJson(String jsonString) throws IOException {
+    return JSON.getGson().fromJson(jsonString, WebhookEndpointSummary.class);
   }
 
   /**
-   * Convert an instance of WebhookEndpointResponse to an JSON string
+   * Convert an instance of WebhookEndpointSummary to an JSON string
    *
    * @return JSON string
    */

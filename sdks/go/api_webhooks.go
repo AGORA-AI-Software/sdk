@@ -23,178 +23,33 @@ import (
 // WebhooksAPIService WebhooksAPI service
 type WebhooksAPIService service
 
-type ApiCreateWebhookEndpointRequest struct {
-	ctx context.Context
-	ApiService *WebhooksAPIService
-	campaignId int32
-	webhookEndpointCreate *WebhookEndpointCreate
-}
-
-func (r ApiCreateWebhookEndpointRequest) WebhookEndpointCreate(webhookEndpointCreate WebhookEndpointCreate) ApiCreateWebhookEndpointRequest {
-	r.webhookEndpointCreate = &webhookEndpointCreate
-	return r
-}
-
-func (r ApiCreateWebhookEndpointRequest) Execute() (*WebhookEndpointResponse, *http.Response, error) {
-	return r.ApiService.CreateWebhookEndpointExecute(r)
-}
-
-/*
-CreateWebhookEndpoint Create a webhook endpoint
-
-Registers a new webhook endpoint on a campaign. Returns the endpoint with its signing secret — store it securely, it will not be shown again.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param campaignId ID of the campaign.
- @return ApiCreateWebhookEndpointRequest
-*/
-func (a *WebhooksAPIService) CreateWebhookEndpoint(ctx context.Context, campaignId int32) ApiCreateWebhookEndpointRequest {
-	return ApiCreateWebhookEndpointRequest{
-		ApiService: a,
-		ctx: ctx,
-		campaignId: campaignId,
-	}
-}
-
-// Execute executes the request
-//  @return WebhookEndpointResponse
-func (a *WebhooksAPIService) CreateWebhookEndpointExecute(r ApiCreateWebhookEndpointRequest) (*WebhookEndpointResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *WebhookEndpointResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.CreateWebhookEndpoint")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints"
-	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.campaignId < 1 {
-		return localVarReturnValue, nil, reportError("campaignId must be greater than 1")
-	}
-	if r.webhookEndpointCreate == nil {
-		return localVarReturnValue, nil, reportError("webhookEndpointCreate is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.webhookEndpointCreate
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiDeleteWebhookEndpointRequest struct {
+type ApiGetWebhookEndpointHealthRequest struct {
 	ctx context.Context
 	ApiService *WebhooksAPIService
 	campaignId int32
 	endpointId int32
 }
 
-func (r ApiDeleteWebhookEndpointRequest) Execute() (*http.Response, error) {
-	return r.ApiService.DeleteWebhookEndpointExecute(r)
+func (r ApiGetWebhookEndpointHealthRequest) Execute() (*WebhookEndpointHealth, *http.Response, error) {
+	return r.ApiService.GetWebhookEndpointHealthExecute(r)
 }
 
 /*
-DeleteWebhookEndpoint Delete a webhook endpoint
+GetWebhookEndpointHealth Get delivery health for a webhook endpoint
 
-Permanently deletes a webhook endpoint and all its delivery history.
+Returns a delivery health snapshot for the endpoint: total/successful/failed
+delivery counts, success rate, last delivery timestamp, and average response
+time. Use this to monitor the reliability of your webhook integration — alert
+on a dropping success rate or a stale `last_delivery_at`.
+
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param campaignId ID of the campaign.
  @param endpointId ID of the webhook endpoint.
- @return ApiDeleteWebhookEndpointRequest
+ @return ApiGetWebhookEndpointHealthRequest
 */
-func (a *WebhooksAPIService) DeleteWebhookEndpoint(ctx context.Context, campaignId int32, endpointId int32) ApiDeleteWebhookEndpointRequest {
-	return ApiDeleteWebhookEndpointRequest{
+func (a *WebhooksAPIService) GetWebhookEndpointHealth(ctx context.Context, campaignId int32, endpointId int32) ApiGetWebhookEndpointHealthRequest {
+	return ApiGetWebhookEndpointHealthRequest{
 		ApiService: a,
 		ctx: ctx,
 		campaignId: campaignId,
@@ -203,169 +58,21 @@ func (a *WebhooksAPIService) DeleteWebhookEndpoint(ctx context.Context, campaign
 }
 
 // Execute executes the request
-func (a *WebhooksAPIService) DeleteWebhookEndpointExecute(r ApiDeleteWebhookEndpointRequest) (*http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodDelete
-		localVarPostBody     interface{}
-		formFiles            []formFile
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.DeleteWebhookEndpoint")
-	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"endpoint_id"+"}", url.PathEscape(parameterValueToString(r.endpointId, "endpointId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.campaignId < 1 {
-		return nil, reportError("campaignId must be greater than 1")
-	}
-	if r.endpointId < 1 {
-		return nil, reportError("endpointId must be greater than 1")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarHTTPResponse, newErr
-	}
-
-	return localVarHTTPResponse, nil
-}
-
-type ApiListWebhookDeliveriesRequest struct {
-	ctx context.Context
-	ApiService *WebhooksAPIService
-	campaignId int32
-	endpointId int32
-	success *bool
-	limit *int32
-}
-
-// Filter by delivery outcome. Omit to return all deliveries.
-func (r ApiListWebhookDeliveriesRequest) Success(success bool) ApiListWebhookDeliveriesRequest {
-	r.success = &success
-	return r
-}
-
-// Maximum number of deliveries to return.
-func (r ApiListWebhookDeliveriesRequest) Limit(limit int32) ApiListWebhookDeliveriesRequest {
-	r.limit = &limit
-	return r
-}
-
-func (r ApiListWebhookDeliveriesRequest) Execute() ([]WebhookDeliveryResponse, *http.Response, error) {
-	return r.ApiService.ListWebhookDeliveriesExecute(r)
-}
-
-/*
-ListWebhookDeliveries List deliveries for a webhook endpoint
-
-Returns the delivery history for a webhook endpoint, ordered by most recent first.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param campaignId ID of the campaign.
- @param endpointId ID of the webhook endpoint.
- @return ApiListWebhookDeliveriesRequest
-*/
-func (a *WebhooksAPIService) ListWebhookDeliveries(ctx context.Context, campaignId int32, endpointId int32) ApiListWebhookDeliveriesRequest {
-	return ApiListWebhookDeliveriesRequest{
-		ApiService: a,
-		ctx: ctx,
-		campaignId: campaignId,
-		endpointId: endpointId,
-	}
-}
-
-// Execute executes the request
-//  @return []WebhookDeliveryResponse
-func (a *WebhooksAPIService) ListWebhookDeliveriesExecute(r ApiListWebhookDeliveriesRequest) ([]WebhookDeliveryResponse, *http.Response, error) {
+//  @return WebhookEndpointHealth
+func (a *WebhooksAPIService) GetWebhookEndpointHealthExecute(r ApiGetWebhookEndpointHealthRequest) (*WebhookEndpointHealth, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  []WebhookDeliveryResponse
+		localVarReturnValue  *WebhookEndpointHealth
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.ListWebhookDeliveries")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.GetWebhookEndpointHealth")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/deliveries"
+	localVarPath := localBasePath + "/webhooks/{campaign_id}/endpoints/{endpoint_id}/health"
 	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"endpoint_id"+"}", url.PathEscape(parameterValueToString(r.endpointId, "endpointId")), -1)
 
@@ -379,15 +86,6 @@ func (a *WebhooksAPIService) ListWebhookDeliveriesExecute(r ApiListWebhookDelive
 		return localVarReturnValue, nil, reportError("endpointId must be greater than 1")
 	}
 
-	if r.success != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "success", r.success, "form", "")
-	}
-	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
-	} else {
-		var defaultValue int32 = 50
-		r.limit = &defaultValue
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -480,14 +178,14 @@ type ApiListWebhookEndpointsRequest struct {
 	campaignId int32
 }
 
-func (r ApiListWebhookEndpointsRequest) Execute() ([]WebhookEndpointResponse, *http.Response, error) {
+func (r ApiListWebhookEndpointsRequest) Execute() ([]WebhookEndpointSummary, *http.Response, error) {
 	return r.ApiService.ListWebhookEndpointsExecute(r)
 }
 
 /*
 ListWebhookEndpoints List webhook endpoints
 
-Returns all webhook endpoints registered on a campaign.
+Returns all webhook endpoints configured on a campaign. Does not include signing secrets — use the Agora dashboard to manage secrets.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param campaignId ID of the campaign.
@@ -502,13 +200,13 @@ func (a *WebhooksAPIService) ListWebhookEndpoints(ctx context.Context, campaignI
 }
 
 // Execute executes the request
-//  @return []WebhookEndpointResponse
-func (a *WebhooksAPIService) ListWebhookEndpointsExecute(r ApiListWebhookEndpointsRequest) ([]WebhookEndpointResponse, *http.Response, error) {
+//  @return []WebhookEndpointSummary
+func (a *WebhooksAPIService) ListWebhookEndpointsExecute(r ApiListWebhookEndpointsRequest) ([]WebhookEndpointSummary, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  []WebhookEndpointResponse
+		localVarReturnValue  []WebhookEndpointSummary
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.ListWebhookEndpoints")
@@ -516,7 +214,7 @@ func (a *WebhooksAPIService) ListWebhookEndpointsExecute(r ApiListWebhookEndpoin
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints"
+	localVarPath := localBasePath + "/webhooks/{campaign_id}/endpoints"
 	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -643,7 +341,7 @@ func (a *WebhooksAPIService) ListWebhookEventTypesExecute(r ApiListWebhookEventT
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/events"
+	localVarPath := localBasePath + "/webhooks/{campaign_id}/events"
 	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -704,605 +402,6 @@ func (a *WebhooksAPIService) ListWebhookEventTypesExecute(r ApiListWebhookEventT
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiRedeliverWebhookDeliveryRequest struct {
-	ctx context.Context
-	ApiService *WebhooksAPIService
-	campaignId int32
-	deliveryId int32
-}
-
-func (r ApiRedeliverWebhookDeliveryRequest) Execute() (*WebhookDeliveryResponse, *http.Response, error) {
-	return r.ApiService.RedeliverWebhookDeliveryExecute(r)
-}
-
-/*
-RedeliverWebhookDelivery Redeliver a webhook delivery
-
-Re-sends a previously delivered (or failed) event to the original endpoint. Creates a new delivery record linked to the original via `redelivery_of_id`.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param campaignId ID of the campaign.
- @param deliveryId ID of the delivery to redeliver.
- @return ApiRedeliverWebhookDeliveryRequest
-*/
-func (a *WebhooksAPIService) RedeliverWebhookDelivery(ctx context.Context, campaignId int32, deliveryId int32) ApiRedeliverWebhookDeliveryRequest {
-	return ApiRedeliverWebhookDeliveryRequest{
-		ApiService: a,
-		ctx: ctx,
-		campaignId: campaignId,
-		deliveryId: deliveryId,
-	}
-}
-
-// Execute executes the request
-//  @return WebhookDeliveryResponse
-func (a *WebhooksAPIService) RedeliverWebhookDeliveryExecute(r ApiRedeliverWebhookDeliveryRequest) (*WebhookDeliveryResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *WebhookDeliveryResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.RedeliverWebhookDelivery")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/deliveries/{delivery_id}/redeliver"
-	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"delivery_id"+"}", url.PathEscape(parameterValueToString(r.deliveryId, "deliveryId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.campaignId < 1 {
-		return localVarReturnValue, nil, reportError("campaignId must be greater than 1")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiRegenerateWebhookSecretRequest struct {
-	ctx context.Context
-	ApiService *WebhooksAPIService
-	campaignId int32
-	endpointId int32
-}
-
-func (r ApiRegenerateWebhookSecretRequest) Execute() (*RegenerateSecretResponse, *http.Response, error) {
-	return r.ApiService.RegenerateWebhookSecretExecute(r)
-}
-
-/*
-RegenerateWebhookSecret Regenerate the signing secret
-
-Rotates the HMAC-SHA256 signing secret for a webhook endpoint. The old secret stops working immediately. Store the new secret securely — it will not be shown again.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param campaignId ID of the campaign.
- @param endpointId ID of the webhook endpoint.
- @return ApiRegenerateWebhookSecretRequest
-*/
-func (a *WebhooksAPIService) RegenerateWebhookSecret(ctx context.Context, campaignId int32, endpointId int32) ApiRegenerateWebhookSecretRequest {
-	return ApiRegenerateWebhookSecretRequest{
-		ApiService: a,
-		ctx: ctx,
-		campaignId: campaignId,
-		endpointId: endpointId,
-	}
-}
-
-// Execute executes the request
-//  @return RegenerateSecretResponse
-func (a *WebhooksAPIService) RegenerateWebhookSecretExecute(r ApiRegenerateWebhookSecretRequest) (*RegenerateSecretResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *RegenerateSecretResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.RegenerateWebhookSecret")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/regenerate-secret"
-	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"endpoint_id"+"}", url.PathEscape(parameterValueToString(r.endpointId, "endpointId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.campaignId < 1 {
-		return localVarReturnValue, nil, reportError("campaignId must be greater than 1")
-	}
-	if r.endpointId < 1 {
-		return localVarReturnValue, nil, reportError("endpointId must be greater than 1")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiTestWebhookEndpointRequest struct {
-	ctx context.Context
-	ApiService *WebhooksAPIService
-	campaignId int32
-	endpointId int32
-}
-
-func (r ApiTestWebhookEndpointRequest) Execute() (*WebhookDeliveryResponse, *http.Response, error) {
-	return r.ApiService.TestWebhookEndpointExecute(r)
-}
-
-/*
-TestWebhookEndpoint Send a test ping to a webhook endpoint
-
-Sends a synthetic `ping` event to the endpoint URL and records the delivery result. Useful for verifying connectivity and signature verification before going live.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param campaignId ID of the campaign.
- @param endpointId ID of the webhook endpoint.
- @return ApiTestWebhookEndpointRequest
-*/
-func (a *WebhooksAPIService) TestWebhookEndpoint(ctx context.Context, campaignId int32, endpointId int32) ApiTestWebhookEndpointRequest {
-	return ApiTestWebhookEndpointRequest{
-		ApiService: a,
-		ctx: ctx,
-		campaignId: campaignId,
-		endpointId: endpointId,
-	}
-}
-
-// Execute executes the request
-//  @return WebhookDeliveryResponse
-func (a *WebhooksAPIService) TestWebhookEndpointExecute(r ApiTestWebhookEndpointRequest) (*WebhookDeliveryResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *WebhookDeliveryResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.TestWebhookEndpoint")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/test"
-	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"endpoint_id"+"}", url.PathEscape(parameterValueToString(r.endpointId, "endpointId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.campaignId < 1 {
-		return localVarReturnValue, nil, reportError("campaignId must be greater than 1")
-	}
-	if r.endpointId < 1 {
-		return localVarReturnValue, nil, reportError("endpointId must be greater than 1")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiUpdateWebhookEndpointRequest struct {
-	ctx context.Context
-	ApiService *WebhooksAPIService
-	campaignId int32
-	endpointId int32
-	webhookEndpointUpdate *WebhookEndpointUpdate
-}
-
-func (r ApiUpdateWebhookEndpointRequest) WebhookEndpointUpdate(webhookEndpointUpdate WebhookEndpointUpdate) ApiUpdateWebhookEndpointRequest {
-	r.webhookEndpointUpdate = &webhookEndpointUpdate
-	return r
-}
-
-func (r ApiUpdateWebhookEndpointRequest) Execute() (*WebhookEndpointResponse, *http.Response, error) {
-	return r.ApiService.UpdateWebhookEndpointExecute(r)
-}
-
-/*
-UpdateWebhookEndpoint Update a webhook endpoint
-
-Updates one or more fields on an existing webhook endpoint. Omitted fields are unchanged.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param campaignId ID of the campaign.
- @param endpointId ID of the webhook endpoint.
- @return ApiUpdateWebhookEndpointRequest
-*/
-func (a *WebhooksAPIService) UpdateWebhookEndpoint(ctx context.Context, campaignId int32, endpointId int32) ApiUpdateWebhookEndpointRequest {
-	return ApiUpdateWebhookEndpointRequest{
-		ApiService: a,
-		ctx: ctx,
-		campaignId: campaignId,
-		endpointId: endpointId,
-	}
-}
-
-// Execute executes the request
-//  @return WebhookEndpointResponse
-func (a *WebhooksAPIService) UpdateWebhookEndpointExecute(r ApiUpdateWebhookEndpointRequest) (*WebhookEndpointResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPatch
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *WebhookEndpointResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.UpdateWebhookEndpoint")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"campaign_id"+"}", url.PathEscape(parameterValueToString(r.campaignId, "campaignId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"endpoint_id"+"}", url.PathEscape(parameterValueToString(r.endpointId, "endpointId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.campaignId < 1 {
-		return localVarReturnValue, nil, reportError("campaignId must be greater than 1")
-	}
-	if r.endpointId < 1 {
-		return localVarReturnValue, nil, reportError("endpointId must be greater than 1")
-	}
-	if r.webhookEndpointUpdate == nil {
-		return localVarReturnValue, nil, reportError("webhookEndpointUpdate is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.webhookEndpointUpdate
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

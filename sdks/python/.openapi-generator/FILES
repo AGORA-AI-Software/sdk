@@ -20,11 +20,8 @@ agora_public_api/models/lead_input.py
 agora_public_api/models/lead_upload_error.py
 agora_public_api/models/lead_upload_request.py
 agora_public_api/models/lead_upload_response.py
-agora_public_api/models/regenerate_secret_response.py
-agora_public_api/models/webhook_delivery_response.py
-agora_public_api/models/webhook_endpoint_create.py
-agora_public_api/models/webhook_endpoint_response.py
-agora_public_api/models/webhook_endpoint_update.py
+agora_public_api/models/webhook_endpoint_health.py
+agora_public_api/models/webhook_endpoint_summary.py
 agora_public_api/py.typed
 agora_public_api/rest.py
 docs/ApiKeyTokenRequest.md
@@ -36,11 +33,8 @@ docs/LeadUploadError.md
 docs/LeadUploadRequest.md
 docs/LeadUploadResponse.md
 docs/LeadsApi.md
-docs/RegenerateSecretResponse.md
-docs/WebhookDeliveryResponse.md
-docs/WebhookEndpointCreate.md
-docs/WebhookEndpointResponse.md
-docs/WebhookEndpointUpdate.md
+docs/WebhookEndpointHealth.md
+docs/WebhookEndpointSummary.md
 docs/WebhooksApi.md
 git_push.sh
 pyproject.toml
