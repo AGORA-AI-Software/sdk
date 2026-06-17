@@ -1,0 +1,26 @@
+name: Improvement
+description: An existing SDK, spec, or example that could be cleaner or more complete.
+labels: ["improvement"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Python SDK
+        - TypeScript SDK
+        - Java SDK
+        - Go SDK
+        - OpenAPI spec
+        - Restish CLI config
+        - AI agent plugins
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What could be improved?
+    validations:
+      required: true

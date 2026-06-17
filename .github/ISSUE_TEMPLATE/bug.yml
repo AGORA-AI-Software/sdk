@@ -1,0 +1,46 @@
+name: Bug report
+description: Something is broken in the SDK, OpenAPI spec, or CLI config.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Please include as much detail as you can.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Python SDK
+        - TypeScript SDK
+        - Java SDK
+        - Go SDK
+        - OpenAPI spec
+        - Restish CLI config
+        - AI agent plugins
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What's broken?
+      description: Include error messages, unexpected behavior, or incorrect output.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Install the SDK
+        2. Call `uploadLeads` with...
+        3. See error...
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: SDK version
+      placeholder: e.g. 1.0.4
+    validations:
+      required: false

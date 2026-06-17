@@ -141,6 +141,7 @@ components:
         api_key:
           type: string
           minLength: 16
+          example: "agora_live_YOUR_KEY"
           description: Agora API key. Never log or persist this value outside secure credential storage.
     ApiKeyTokenResponse:
       type: object
