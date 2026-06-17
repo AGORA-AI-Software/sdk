@@ -2,16 +2,18 @@
 
 This repo contains Agora's public OpenAPI contract, generated SDKs, Restish CLI configuration, and AI-agent plugins for the API-key-authenticated public API.
 
+**📖 Full SDK docs → [docs.agoraai.tech/sdk](https://docs.agoraai.tech/sdk/)**
+
 **API Docs:** [core.agoraai.tech/api-docs](https://core.agoraai.tech/api-docs) · [core-dev.agoraai.tech/api-docs](https://core-dev.agoraai.tech/api-docs)
 
 ## SDKs
 
-| Language | Location | Install |
-|---|---|---|
-| Python | [`sdks/python`](sdks/python/README.md) | `pip install agora-public-api` |
-| TypeScript | [`sdks/typescript`](sdks/typescript/README.md) | `npm install @agora-ai/public-api` |
-| Java | [`sdks/java`](sdks/java/README.md) | Maven: `ai.agora:agora-public-api` |
-| Go | [`sdks/go`](sdks/go/README.md) | `go get github.com/AGORA-AI-Software/sdk/sdks/go` |
+| Language | Location | Install | Docs |
+|---|---|---|---|
+| Python | [`sdks/python`](sdks/python/README.md) | `pip install agora-public-api` | [docs.agoraai.tech/sdk/python](https://docs.agoraai.tech/sdk/python/) |
+| TypeScript | [`sdks/typescript`](sdks/typescript/README.md) | `npm install @agora-ai/public-api` | [docs.agoraai.tech/sdk/typescript](https://docs.agoraai.tech/sdk/typescript/) |
+| Java | [`sdks/java`](sdks/java/README.md) | Maven: `ai.agora:agora-public-api` | [docs.agoraai.tech/sdk/java](https://docs.agoraai.tech/sdk/java/) |
+| Go | [`sdks/go`](sdks/go/README.md) | `go get github.com/AGORA-AI-Software/sdk/sdks/go` | [docs.agoraai.tech/sdk/go](https://docs.agoraai.tech/sdk/go/) |
 
 ## CLI (Restish)
 
