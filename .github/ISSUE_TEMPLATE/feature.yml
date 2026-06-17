@@ -1,0 +1,29 @@
+name: Feature request
+description: Request a new SDK language, endpoint, or capability.
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - New SDK language
+        - New API endpoint
+        - OpenAPI spec change
+        - Restish CLI
+        - AI agent plugins
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What do you want?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Why is this needed?
+    validations:
+      required: false
