@@ -4,6 +4,7 @@ README.md
 api/openapi.yaml
 api_authentication.go
 api_leads.go
+api_webhooks.go
 client.go
 configuration.go
 docs/ApiKeyTokenRequest.md
@@ -15,6 +16,12 @@ docs/LeadUploadError.md
 docs/LeadUploadRequest.md
 docs/LeadUploadResponse.md
 docs/LeadsAPI.md
+docs/RegenerateSecretResponse.md
+docs/WebhookDeliveryResponse.md
+docs/WebhookEndpointCreate.md
+docs/WebhookEndpointResponse.md
+docs/WebhookEndpointUpdate.md
+docs/WebhooksAPI.md
 git_push.sh
 go.mod
 go.sum
@@ -25,5 +32,10 @@ model_lead_input.go
 model_lead_upload_error.go
 model_lead_upload_request.go
 model_lead_upload_response.go
+model_regenerate_secret_response.go
+model_webhook_delivery_response.go
+model_webhook_endpoint_create.go
+model_webhook_endpoint_response.go
+model_webhook_endpoint_update.go
 response.go
 utils.go

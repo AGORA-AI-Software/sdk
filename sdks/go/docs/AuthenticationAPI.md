@@ -29,7 +29,7 @@ import (
 )
 
 func main() {
-	apiKeyTokenRequest := *openapiclient.NewApiKeyTokenRequest("ApiKey_example") // ApiKeyTokenRequest | 
+	apiKeyTokenRequest := *openapiclient.NewApiKeyTokenRequest("agora_live_YOUR_KEY") // ApiKeyTokenRequest | 
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)

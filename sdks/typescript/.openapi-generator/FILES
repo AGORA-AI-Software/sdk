@@ -4,6 +4,7 @@ README.md
 package.json
 src/apis/AuthenticationApi.ts
 src/apis/LeadsApi.ts
+src/apis/WebhooksApi.ts
 src/apis/index.ts
 src/index.ts
 src/models/ApiKeyTokenRequest.ts
@@ -13,6 +14,11 @@ src/models/LeadInput.ts
 src/models/LeadUploadError.ts
 src/models/LeadUploadRequest.ts
 src/models/LeadUploadResponse.ts
+src/models/RegenerateSecretResponse.ts
+src/models/WebhookDeliveryResponse.ts
+src/models/WebhookEndpointCreate.ts
+src/models/WebhookEndpointResponse.ts
+src/models/WebhookEndpointUpdate.ts
 src/models/index.ts
 src/runtime.ts
 tsconfig.esm.json

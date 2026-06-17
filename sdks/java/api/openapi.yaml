@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
   description: Agora Public API. Authenticate with an API key and upload leads to
-    authorized campaigns.
+    authorized campaigns. Manage webhook endpoints to receive real-time event notifications.
   title: Agora Public API
-  version: 0.1.0
+  version: 1.1.0
 servers:
 - description: Production API
   url: https://core.agoraai.tech/api/v1
@@ -16,6 +16,8 @@ tags:
   name: Authentication
 - description: API-key-authenticated lead ingestion.
   name: Leads
+- description: Manage outbound webhook endpoints and view delivery history for a campaign.
+  name: Webhooks
 paths:
   /auth/api-key/token:
     post:
@@ -140,16 +142,386 @@ paths:
       x-content-type: application/json
       x-accepts:
       - application/json
+  /campaigns/{campaign_id}/webhooks/events:
+    get:
+      description: Returns all event type strings that can be subscribed to on a webhook
+        endpoint.
+      operationId: listWebhookEventTypes
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                eventTypes:
+                  value:
+                  - lead.created
+                  - leads.bulk_created
+                  - lead.status_changed
+                  - lead.converted
+                  - call.started
+                  - call.completed
+                  - form.submitted
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Array of event type strings.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - bearerAuth: []
+      summary: List webhook event types
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
+  /campaigns/{campaign_id}/webhooks/endpoints:
+    get:
+      description: Returns all webhook endpoints registered on a campaign.
+      operationId: listWebhookEndpoints
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookEndpointResponse'
+                type: array
+          description: List of webhook endpoints.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - bearerAuth: []
+      summary: List webhook endpoints
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
+    post:
+      description: "Registers a new webhook endpoint on a campaign. Returns the endpoint\
+        \ with its signing secret — store it securely, it will not be shown again."
+      operationId: createWebhookEndpoint
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      requestBody:
+        content:
+          application/json:
+            examples:
+              create:
+                summary: Subscribe to lead events
+                value:
+                  url: https://hooks.example.com/agora
+                  description: Production lead handler
+                  subscribed_events:
+                  - lead.created
+                  - lead.status_changed
+                  is_enabled: true
+            schema:
+              $ref: '#/components/schemas/WebhookEndpointCreate'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointResponse'
+          description: Endpoint created. The `secret` field is only returned here
+            — store it securely.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid event type or request body.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - bearerAuth: []
+      summary: Create a webhook endpoint
+      tags:
+      - Webhooks
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}:
+    delete:
+      description: Permanently deletes a webhook endpoint and all its delivery history.
+      operationId: deleteWebhookEndpoint
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - $ref: '#/components/parameters/EndpointId'
+      responses:
+        "204":
+          description: Endpoint deleted.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: Delete a webhook endpoint
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
+    patch:
+      description: Updates one or more fields on an existing webhook endpoint. Omitted
+        fields are unchanged.
+      operationId: updateWebhookEndpoint
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - $ref: '#/components/parameters/EndpointId'
+      requestBody:
+        content:
+          application/json:
+            examples:
+              disable:
+                summary: Disable an endpoint
+                value:
+                  is_enabled: false
+              changeUrl:
+                summary: Update the destination URL
+                value:
+                  url: https://hooks.example.com/agora-v2
+            schema:
+              $ref: '#/components/schemas/WebhookEndpointUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointResponse'
+          description: Updated endpoint.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid event type or request body.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: Update a webhook endpoint
+      tags:
+      - Webhooks
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/deliveries:
+    get:
+      description: "Returns the delivery history for a webhook endpoint, ordered by\
+        \ most recent first."
+      operationId: listWebhookDeliveries
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - $ref: '#/components/parameters/EndpointId'
+      - description: Filter by delivery outcome. Omit to return all deliveries.
+        explode: true
+        in: query
+        name: success
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Maximum number of deliveries to return.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 200
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookDeliveryResponse'
+                type: array
+          description: "List of deliveries, most recent first."
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: List deliveries for a webhook endpoint
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
+  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/test:
+    post:
+      description: Sends a synthetic `ping` event to the endpoint URL and records
+        the delivery result. Useful for verifying connectivity and signature verification
+        before going live.
+      operationId: testWebhookEndpoint
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - $ref: '#/components/parameters/EndpointId'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookDeliveryResponse'
+          description: Delivery record for the test ping.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: Send a test ping to a webhook endpoint
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
+  /campaigns/{campaign_id}/webhooks/endpoints/{endpoint_id}/regenerate-secret:
+    post:
+      description: Rotates the HMAC-SHA256 signing secret for a webhook endpoint.
+        The old secret stops working immediately. Store the new secret securely —
+        it will not be shown again.
+      operationId: regenerateWebhookSecret
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - $ref: '#/components/parameters/EndpointId'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                newSecret:
+                  value:
+                    secret: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+              schema:
+                $ref: '#/components/schemas/RegenerateSecretResponse'
+          description: New signing secret.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: Regenerate the signing secret
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
+  /campaigns/{campaign_id}/webhooks/deliveries/{delivery_id}/redeliver:
+    post:
+      description: Re-sends a previously delivered (or failed) event to the original
+        endpoint. Creates a new delivery record linked to the original via `redelivery_of_id`.
+      operationId: redeliverWebhookDelivery
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - description: ID of the delivery to redeliver.
+        explode: false
+        in: path
+        name: delivery_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookDeliveryResponse'
+          description: New delivery record for the redelivery attempt.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: Redeliver a webhook delivery
+      tags:
+      - Webhooks
+      x-accepts:
+      - application/json
 components:
+  parameters:
+    CampaignId:
+      description: ID of the campaign.
+      explode: false
+      in: path
+      name: campaign_id
+      required: true
+      schema:
+        minimum: 1
+        type: integer
+      style: simple
+    EndpointId:
+      description: ID of the webhook endpoint.
+      explode: false
+      in: path
+      name: endpoint_id
+      required: true
+      schema:
+        minimum: 1
+        type: integer
+      style: simple
+  responses:
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: "Missing, invalid, or expired bearer token."
+    Forbidden:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: Bearer token is not authorized for this campaign.
+    NotFound:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: Resource not found or does not belong to this campaign.
   schemas:
     ApiKeyTokenRequest:
       additionalProperties: false
       example:
-        api_key: api_key
+        api_key: agora_live_YOUR_KEY
       properties:
         api_key:
           description: Agora API key. Never log or persist this value outside secure
             credential storage.
+          example: agora_live_YOUR_KEY
           minLength: 16
           type: string
       required:
@@ -311,6 +683,186 @@ components:
       required:
       - message
       - row
+    WebhookEndpointCreate:
+      additionalProperties: false
+      example:
+        is_enabled: true
+        subscribed_events:
+        - subscribed_events
+        - subscribed_events
+        description: description
+        url: https://hooks.example.com/agora
+      properties:
+        url:
+          description: HTTPS URL Agora will POST events to.
+          example: https://hooks.example.com/agora
+          format: uri
+          type: string
+        description:
+          description: Optional human-readable label for this endpoint.
+          type: string
+          nullable: true
+        subscribed_events:
+          default: []
+          description: Event types to subscribe to. Use `listWebhookEventTypes` for
+            valid values.
+          items:
+            type: string
+          type: array
+        is_enabled:
+          default: true
+          description: Whether the endpoint should receive deliveries.
+          type: boolean
+      required:
+      - url
+    WebhookEndpointUpdate:
+      additionalProperties: false
+      example:
+        is_enabled: true
+        subscribed_events:
+        - subscribed_events
+        - subscribed_events
+        description: description
+        url: https://openapi-generator.tech
+      properties:
+        url:
+          description: New destination URL.
+          format: uri
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        subscribed_events:
+          description: Replaces the full subscribed event list.
+          items:
+            type: string
+          type: array
+          nullable: true
+        is_enabled:
+          type: boolean
+          nullable: true
+    WebhookEndpointResponse:
+      additionalProperties: false
+      example:
+        is_enabled: true
+        subscribed_events:
+        - subscribed_events
+        - subscribed_events
+        description: description
+        created_at: 2000-01-23T04:56:07.000+00:00
+        id: 0
+        secret: secret
+        campaign_id: 6
+        url: https://openapi-generator.tech
+        last_delivery_is_successful: true
+      properties:
+        id:
+          type: integer
+        campaign_id:
+          type: integer
+        url:
+          format: uri
+          type: string
+        description:
+          type: string
+          nullable: true
+        subscribed_events:
+          items:
+            type: string
+          type: array
+        is_enabled:
+          type: boolean
+        created_at:
+          format: date-time
+          type: string
+        secret:
+          description: Signing secret. Only returned on creation — store it securely.
+          type: string
+          nullable: true
+        last_delivery_is_successful:
+          description: "Outcome of the most recent delivery attempt, or null if no\
+            \ deliveries yet."
+          type: boolean
+          nullable: true
+      required:
+      - campaign_id
+      - created_at
+      - id
+      - is_enabled
+      - subscribed_events
+      - url
+    WebhookDeliveryResponse:
+      additionalProperties: false
+      example:
+        duration_ms: 5
+        is_successful: true
+        event_type: lead.created
+        attempt_number: 5
+        response_status: 1
+        payload: "{}"
+        redelivery_of_id: 2
+        endpoint_id: 6
+        response_body: response_body
+        id: 0
+        delivered_at: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          type: integer
+        endpoint_id:
+          type: integer
+        event_type:
+          example: lead.created
+          type: string
+        payload:
+          description: Full JSON payload that was sent to the endpoint.
+          type: object
+        response_status:
+          description: "HTTP status code returned by the endpoint, or null if the\
+            \ request failed to connect."
+          type: integer
+          nullable: true
+        response_body:
+          description: First 1 KB of the response body.
+          type: string
+          nullable: true
+        duration_ms:
+          description: Round-trip time in milliseconds.
+          type: integer
+          nullable: true
+        is_successful:
+          description: True if the endpoint returned a 2xx status within 10 seconds.
+          type: boolean
+        attempt_number:
+          description: "1 for the original delivery, 2 for the automatic retry."
+          type: integer
+        delivered_at:
+          format: date-time
+          type: string
+        redelivery_of_id:
+          description: "ID of the original delivery if this is a manual redeliver,\
+            \ otherwise null."
+          type: integer
+          nullable: true
+      required:
+      - attempt_number
+      - delivered_at
+      - endpoint_id
+      - event_type
+      - id
+      - is_successful
+      - payload
+    RegenerateSecretResponse:
+      additionalProperties: false
+      example:
+        secret: secret
+      properties:
+        secret:
+          description: New HMAC-SHA256 signing secret. Store securely — not shown
+            again.
+          type: string
+      required:
+      - secret
     ErrorResponse:
       additionalProperties: false
       example:
