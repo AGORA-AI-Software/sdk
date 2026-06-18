@@ -3,6 +3,8 @@ info:
   title: Agora Public API
   version: 1.1.0
   description: Agora Public API. Authenticate with an API key and upload leads to authorized campaigns. Manage webhook endpoints to receive real-time event notifications.
+
+
 servers:
   - url: https://core.agoraai.tech/api/v1
     description: Production API

@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.4...v1.0.5) (2026-06-17)
+
+### Bug Fixes
+
+* api_key schema example + issue/PR templates ([#15](https://github.com/AGORA-AI-Software/sdk/issues/15)) ([a4da4b5](https://github.com/AGORA-AI-Software/sdk/commit/a4da4b5556ba285dff7ffa80a5fe640091342a97))
+
 ## [1.0.4](https://github.com/AGORA-AI-Software/sdk/compare/v1.0.3...v1.0.4) (2026-06-07)
 
 ### Bug Fixes
