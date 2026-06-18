@@ -1,9 +1,11 @@
 .gitignore
 .npmignore
+.openapi-generator-ignore
 README.md
 package.json
 src/apis/AuthenticationApi.ts
 src/apis/LeadsApi.ts
+src/apis/WebhooksApi.ts
 src/apis/index.ts
 src/index.ts
 src/models/ApiKeyTokenRequest.ts
@@ -13,6 +15,8 @@ src/models/LeadInput.ts
 src/models/LeadUploadError.ts
 src/models/LeadUploadRequest.ts
 src/models/LeadUploadResponse.ts
+src/models/WebhookEndpointHealth.ts
+src/models/WebhookEndpointSummary.ts
 src/models/index.ts
 src/runtime.ts
 tsconfig.esm.json

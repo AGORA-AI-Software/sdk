@@ -1,5 +1,6 @@
 .github/workflows/maven.yml
 .gitignore
+.openapi-generator-ignore
 .travis.yml
 README.md
 api/openapi.yaml
@@ -14,6 +15,9 @@ docs/LeadUploadError.md
 docs/LeadUploadRequest.md
 docs/LeadUploadResponse.md
 docs/LeadsApi.md
+docs/WebhookEndpointHealth.md
+docs/WebhookEndpointSummary.md
+docs/WebhooksApi.md
 git_push.sh
 gradle.properties
 gradle/wrapper/gradle-wrapper.jar
@@ -38,6 +42,7 @@ src/main/java/ai/agora/publicapi/ServerVariable.java
 src/main/java/ai/agora/publicapi/StringUtil.java
 src/main/java/ai/agora/publicapi/api/AuthenticationApi.java
 src/main/java/ai/agora/publicapi/api/LeadsApi.java
+src/main/java/ai/agora/publicapi/api/WebhooksApi.java
 src/main/java/ai/agora/publicapi/auth/ApiKeyAuth.java
 src/main/java/ai/agora/publicapi/auth/Authentication.java
 src/main/java/ai/agora/publicapi/auth/HttpBasicAuth.java
@@ -50,3 +55,5 @@ src/main/java/ai/agora/publicapi/model/LeadInput.java
 src/main/java/ai/agora/publicapi/model/LeadUploadError.java
 src/main/java/ai/agora/publicapi/model/LeadUploadRequest.java
 src/main/java/ai/agora/publicapi/model/LeadUploadResponse.java
+src/main/java/ai/agora/publicapi/model/WebhookEndpointHealth.java
+src/main/java/ai/agora/publicapi/model/WebhookEndpointSummary.java

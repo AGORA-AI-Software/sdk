@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
   description: Agora Public API. Authenticate with an API key and upload leads to
-    authorized campaigns.
+    authorized campaigns. Manage webhook endpoints to receive real-time event notifications.
   title: Agora Public API
-  version: 0.1.0
+  version: 1.1.0
 servers:
 - description: Production API
   url: https://core.agoraai.tech/api/v1
@@ -16,6 +16,8 @@ tags:
   name: Authentication
 - description: API-key-authenticated lead ingestion.
   name: Leads
+- description: Manage outbound webhook endpoints and view delivery history for a campaign.
+  name: Webhooks
 paths:
   /auth/api-key/token:
     post:
@@ -134,16 +136,186 @@ paths:
       summary: Upload leads
       tags:
       - Leads
+  /webhooks/{campaign_id}/events:
+    get:
+      description: Returns all event type strings that can be subscribed to on a webhook
+        endpoint.
+      operationId: listWebhookEventTypes
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                eventTypes:
+                  value:
+                  - lead.created
+                  - leads.bulk_created
+                  - lead.status_changed
+                  - lead.converted
+                  - call.started
+                  - call.completed
+                  - form.submitted
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Array of event type strings.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - bearerAuth: []
+      summary: List webhook event types
+      tags:
+      - Webhooks
+  /webhooks/{campaign_id}/endpoints:
+    get:
+      description: Returns all webhook endpoints configured on a campaign. Does not
+        include signing secrets — use the Agora dashboard to manage secrets.
+      operationId: listWebhookEndpoints
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                endpoints:
+                  value:
+                  - id: 12
+                    campaign_id: 1
+                    url: https://hooks.example.com/agora
+                    description: Production lead handler
+                    subscribed_events:
+                    - lead.created
+                    - lead.status_changed
+                    is_enabled: true
+                    created_at: 2026-06-01T10:00:00Z
+                    last_delivery_is_successful: true
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookEndpointSummary'
+                type: array
+          description: List of webhook endpoints.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - bearerAuth: []
+      summary: List webhook endpoints
+      tags:
+      - Webhooks
+  /webhooks/{campaign_id}/endpoints/{endpoint_id}/health:
+    get:
+      description: |
+        Returns a delivery health snapshot for the endpoint: total/successful/failed
+        delivery counts, success rate, last delivery timestamp, and average response
+        time. Use this to monitor the reliability of your webhook integration — alert
+        on a dropping success rate or a stale `last_delivery_at`.
+      operationId: getWebhookEndpointHealth
+      parameters:
+      - $ref: '#/components/parameters/CampaignId'
+      - $ref: '#/components/parameters/EndpointId'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                healthy:
+                  summary: Healthy endpoint
+                  value:
+                    endpoint_id: 12
+                    url: https://hooks.example.com/agora
+                    is_enabled: true
+                    total_deliveries: 843
+                    successful_deliveries: 841
+                    failed_deliveries: 2
+                    success_rate: 0.9976
+                    last_delivery_at: 2026-06-17T14:22:01Z
+                    last_delivery_is_successful: true
+                    avg_duration_ms: 142.3
+                degraded:
+                  summary: Endpoint with failures
+                  value:
+                    endpoint_id: 13
+                    url: https://hooks.example.com/agora-v2
+                    is_enabled: true
+                    total_deliveries: 50
+                    successful_deliveries: 30
+                    failed_deliveries: 20
+                    success_rate: 0.6
+                    last_delivery_at: 2026-06-17T13:00:00Z
+                    last_delivery_is_successful: false
+                    avg_duration_ms: 9800.0
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointHealth'
+          description: Delivery health snapshot.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+      - bearerAuth: []
+      summary: Get delivery health for a webhook endpoint
+      tags:
+      - Webhooks
 components:
+  parameters:
+    CampaignId:
+      description: ID of the campaign.
+      explode: false
+      in: path
+      name: campaign_id
+      required: true
+      schema:
+        minimum: 1
+        type: integer
+      style: simple
+    EndpointId:
+      description: ID of the webhook endpoint.
+      explode: false
+      in: path
+      name: endpoint_id
+      required: true
+      schema:
+        minimum: 1
+        type: integer
+      style: simple
+  responses:
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: "Missing, invalid, or expired bearer token."
+    Forbidden:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: Bearer token is not authorized for this campaign.
+    NotFound:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: Resource not found or does not belong to this campaign.
   schemas:
     ApiKeyTokenRequest:
       additionalProperties: false
       example:
-        api_key: api_key
+        api_key: agora_live_YOUR_KEY
       properties:
         api_key:
           description: Agora API key. Never log or persist this value outside secure
             credential storage.
+          example: agora_live_YOUR_KEY
           minLength: 16
           type: string
       required:
@@ -305,6 +477,111 @@ components:
       required:
       - message
       - row
+    WebhookEndpointSummary:
+      additionalProperties: false
+      example:
+        is_enabled: true
+        subscribed_events:
+        - subscribed_events
+        - subscribed_events
+        description: description
+        created_at: 2000-01-23T04:56:07.000+00:00
+        id: 0
+        campaign_id: 6
+        url: https://openapi-generator.tech
+        last_delivery_is_successful: true
+      properties:
+        id:
+          type: integer
+        campaign_id:
+          type: integer
+        url:
+          description: Destination URL events are delivered to.
+          format: uri
+          type: string
+        description:
+          type: string
+          nullable: true
+        subscribed_events:
+          description: Event types this endpoint is subscribed to.
+          items:
+            type: string
+          type: array
+        is_enabled:
+          type: boolean
+        created_at:
+          format: date-time
+          type: string
+        last_delivery_is_successful:
+          description: "Outcome of the most recent delivery attempt, or null if no\
+            \ deliveries yet."
+          type: boolean
+          nullable: true
+      required:
+      - campaign_id
+      - created_at
+      - id
+      - is_enabled
+      - subscribed_events
+      - url
+    WebhookEndpointHealth:
+      additionalProperties: false
+      example:
+        is_enabled: true
+        failed_deliveries: 5
+        successful_deliveries: 1
+        total_deliveries: 6
+        avg_duration_ms: 2.302136
+        endpoint_id: 0
+        success_rate: 5.637377
+        url: https://openapi-generator.tech
+        last_delivery_at: 2000-01-23T04:56:07.000+00:00
+        last_delivery_is_successful: true
+      properties:
+        endpoint_id:
+          type: integer
+        url:
+          format: uri
+          type: string
+        is_enabled:
+          type: boolean
+        total_deliveries:
+          description: Total number of delivery attempts recorded.
+          type: integer
+        successful_deliveries:
+          description: Deliveries that received a 2xx response within 10 seconds.
+          type: integer
+        failed_deliveries:
+          description: Deliveries that timed out or received a non-2xx response.
+          type: integer
+        success_rate:
+          description: Ratio of successful to total deliveries (0–1). Null if no deliveries
+            yet.
+          format: float
+          type: number
+          nullable: true
+        last_delivery_at:
+          description: Timestamp of the most recent delivery attempt.
+          format: date-time
+          type: string
+          nullable: true
+        last_delivery_is_successful:
+          description: Outcome of the most recent delivery attempt.
+          type: boolean
+          nullable: true
+        avg_duration_ms:
+          description: Average round-trip time in milliseconds across all recorded
+            deliveries.
+          format: float
+          type: number
+          nullable: true
+      required:
+      - endpoint_id
+      - failed_deliveries
+      - is_enabled
+      - successful_deliveries
+      - total_deliveries
+      - url
     ErrorResponse:
       additionalProperties: false
       example:

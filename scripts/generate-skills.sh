@@ -72,3 +72,7 @@ curl -sS -X POST https://core-dev.agoraai.tech/api/v1/leads/upload \
 SKILL
 
 echo "Generated $skill_file from $spec"
+
+# agora-webhook-api skill — regenerate from plugins source
+webhook_skill_dir="plugins/agora-api/skills/agora-webhook-api"
+echo "Skill source already at $webhook_skill_dir/SKILL.md (hand-authored, not overwritten)"
