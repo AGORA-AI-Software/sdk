@@ -174,7 +174,7 @@ WebhooksApi hooks = new WebhooksApi(client);
 List<WebhookEndpointSummary> endpoints = hooks.listWebhookEndpoints(1);
 for (WebhookEndpointSummary ep : endpoints) {
     WebhookEndpointHealth health = hooks.getWebhookEndpointHealth(1, ep.getId());
-    Double rate = health.getSuccessRate();
+    Float rate = health.getSuccessRate();
     System.out.printf("%s: %s success%n", ep.getUrl(), rate != null ? String.format("%.1f%%", rate * 100) : "n/a");
 }
 ```
@@ -215,8 +215,15 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s: %.1f%% success, %.0fms avg\n",
-			ep.GetUrl(), health.GetSuccessRate()*100, health.GetAvgDurationMs())
+		rateStr := "n/a"
+		if rate, ok := health.GetSuccessRateOk(); ok && rate != nil {
+			rateStr = fmt.Sprintf("%.1f%%", *rate*100)
+		}
+		avgStr := "n/a"
+		if avg, ok := health.GetAvgDurationMsOk(); ok && avg != nil {
+			avgStr = fmt.Sprintf("%.0fms", *avg)
+		}
+		fmt.Printf("%s: %s success, %s avg\n", ep.GetUrl(), rateStr, avgStr)
 	}
 }
 ```

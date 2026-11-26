@@ -35,8 +35,7 @@
     "defaultPrompt": [
       "What can I do with the AGORA Public API?",
       "Show an AGORA lead upload example with the compliance disclaimer flow.",
-      "Sync recent AGORA call outcomes and transcripts for my campaign.",
-      "Check webhook delivery health for my AGORA campaign."
+      "Sync recent AGORA call outcomes and transcripts for my campaign."
     ],
     "brandColor": "#2563EB"
   }

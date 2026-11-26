@@ -64,7 +64,7 @@ curl -sS https://core.agoraai.tech/api/v1/campaigns/accessible \
 | User Need | Use This Skill | Coverage |
 |---|---|---|
 | Raw HTTP / `curl` for compliance + lead upload + lead CRUD/status | `agora-lead-upload-api` | All 10 Compliance & Leads endpoints |
-| Raw HTTP / `curl` for campaigns, blueprints, automations, or call sync | `agora-campaigns-and-calls-api` | All 23 Campaigns & Calls endpoints |
+| Raw HTTP / `curl` for campaigns, blueprints, automations, or call sync | `agora-campaigns-and-calls-api` | All 24 Campaigns & Calls endpoints |
 | Webhook endpoint inventory & delivery health monitoring | `agora-webhook-api` | All 3 Webhook endpoints (curl, Restish, SDKs) |
 | Interactive terminal CLI without writing code | `agora-restish-cli` | All 38 endpoints when connected to `/openapi.json` |
 | Generated typed SDKs (Python, TypeScript, Java, Go) | `agora-sdk-usage` | Currently 5 generated operations (auth, lead upload, 3 webhook endpoints); use HTTP/Restish for the other 33 endpoints |

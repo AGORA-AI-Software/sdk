@@ -101,9 +101,13 @@ make setup-restish
 restish agora login-with-api-key '{"api_key":"agora_live_REDACTED"}'
 export AGORA_ACCESS_TOKEN='paste-token-here'
 
+# Fetch current compliance disclaimer version (unauthenticated)
+DISCLAIMER_VERSION=$(curl -sS https://core.agoraai.tech/api/v1/legal/documents/lead-upload-compliance \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])")
+
 # Upload leads
 restish agora upload-leads \
-  '{"campaign_id":1,"leads":[{"phone":"+15551234567"}],"compliance_acknowledged":true}'
+  "{\"campaign_id\":1,\"leads\":[{\"phone\":\"+15551234567\"}],\"compliance_acknowledged\":true,\"disclaimer_version\":\"${DISCLAIMER_VERSION}\"}"
 ```
 
 Use the `dev` profile to target the development environment:
@@ -170,12 +174,17 @@ Live endpoints:
 | Production | `https://core.agoraai.tech/openapi.json` | https://core.agoraai.tech/api-docs |
 | Development | `https://core-dev.agoraai.tech/openapi.json` | https://core-dev.agoraai.tech/api-docs |
 
-### Available operations
+### Available operations (checked-in contract & generated SDKs)
 
 | Operation | Method | Path |
 |---|---|---|
 | `loginWithApiKey` | `POST` | `/api/v1/auth/api-key/token` |
 | `uploadLeads` | `POST` | `/api/v1/leads/upload` |
+| `listWebhookEventTypes` | `GET` | `/api/v1/webhooks/{campaign_id}/events` |
+| `listWebhookEndpoints` | `GET` | `/api/v1/webhooks/{campaign_id}/endpoints` |
+| `getWebhookEndpointHealth` | `GET` | `/api/v1/webhooks/{campaign_id}/endpoints/{endpoint_id}/health` |
+
+For all **38 live Public API endpoints** (Compliance, Campaigns, Leads CRUD/status, Calls sync, and Webhooks), see [`plugins/agora-api/skills/agora-public-api/references/endpoints.md`](plugins/agora-api/skills/agora-public-api/references/endpoints.md) or fetch `https://core.agoraai.tech/openapi.json`.
 
 ### SDK generation & skill validation
 
