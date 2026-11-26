@@ -5,7 +5,7 @@ RESTISH_VERSION ?= 2.1.0
 RESTISH ?= tools/restish/restish
 RESTISH_CONFIG ?= restish/agora.restish.json
 
-.PHONY: fetch-openapi lint-openapi lint-plugin generate generate-sdks generate-skills test clean-generated install-restish setup-restish restish-help
+.PHONY: fetch-openapi lint-openapi lint-plugin sync-bob-skills test-skills-live generate generate-sdks generate-skills test clean-generated install-restish setup-restish restish-help
 
 fetch-openapi:
 	./scripts/fetch-openapi.sh "$(OPENAPI_URL)" "$(OPENAPI_SPEC)"
@@ -15,6 +15,12 @@ lint-openapi:
 
 lint-plugin:
 	./scripts/lint-plugin.sh plugins/agora-api
+
+sync-bob-skills:
+	./scripts/sync-bob-skills.sh
+
+test-skills-live:
+	./scripts/test-live-api-skills.sh
 
 generate: generate-sdks generate-skills
 
