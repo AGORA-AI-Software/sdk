@@ -14,11 +14,17 @@ description: Generate Restish CLI commands for the AGORA Public API across all 3
 Connect Restish directly to `https://core.agoraai.tech/openapi.json` so every live domain (Authentication, Compliance, Campaigns, Leads, Calls, Webhooks) is available as a CLI command:
 
 ```bash
-# Connect production profile (reads bearer JWT from $AGORA_ACCESS_TOKEN)
+# 1. Connect production profile (reads bearer JWT from $AGORA_ACCESS_TOKEN)
 restish api connect agora https://core.agoraai.tech \
   --spec https://core.agoraai.tech/openapi.json \
   --yes --replace \
   'prompt.credentials.AGORA_API_KEY.token: env:AGORA_ACCESS_TOKEN'
+
+# 2. Clear profile-level auth so unauthenticated endpoints (token exchange & compliance) work before AGORA_ACCESS_TOKEN is set
+restish api set agora 'profiles.default.auth: null'
+
+# 3. Sync the OpenAPI spec so all 38 operations register as subcommands
+restish api sync agora
 
 # Inspect all 38 available operations
 restish agora --help
@@ -29,13 +35,13 @@ restish agora --help
 ```bash
 # 1. Exchange API key for a 300-second bearer JWT
 export AGORA_ACCESS_TOKEN=$(restish agora exchange-api-key-for-token \
-  'api_key: agora_live_REDACTED' -f body.access_token -r)
+  'api_key: agora_live_REDACTED' -f body.access_token --rsh-print b -o lines)
 
 # 2. Discover your authorized campaign IDs
 restish agora list-accessible-campaigns
 
 # 3. Fetch the current DNC/TCPA compliance disclaimer version (unauthenticated)
-DISCLAIMER_VERSION=$(restish agora get-lead-upload-disclaimer -f body.version -r)
+DISCLAIMER_VERSION=$(restish agora get-lead-upload-disclaimer -f body.version --rsh-print b -o lines)
 ```
 
 ### Common Commands (Live Spec)
@@ -81,8 +87,9 @@ restish agora provision-campaign --rsh-generate-body
 When running inside the `AGORA-AI-Software/sdk` checkout, `restish/agora.restish.json` is pre-configured with `scripts/get-token.sh` to exchange `AGORA_API_KEY` automatically on every call (covering the checked-in `openapi/agora-public-api.yaml` operations):
 
 ```bash
-# Install repo-local restish binary
+# Install repo-local restish binary and lock config permissions (Restish rejects group/world-readable credential configs)
 make install-restish
+chmod 600 restish/agora.restish.json
 
 # Set your API key (exchanged automatically by scripts/get-token.sh)
 export AGORA_API_KEY='agora_live_REDACTED'
@@ -102,6 +109,8 @@ restish api connect agora-dev https://core-dev.agoraai.tech \
   --spec https://core-dev.agoraai.tech/openapi.json \
   --yes --replace \
   'prompt.credentials.AGORA_API_KEY.token: env:AGORA_ACCESS_TOKEN'
+restish api set agora-dev 'profiles.default.auth: null'
+restish api sync agora-dev
 ```
 
 Or with the repo-local config: `restish --rsh-config restish/agora.restish.json --profile dev agora ...` (or `export RSH_PROFILE=dev`).

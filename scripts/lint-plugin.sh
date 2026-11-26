@@ -34,6 +34,33 @@ for manifest in manifests:
         resolved = (plugin_dir / skills_rel).resolve()
         if not resolved.is_dir():
             errors.append(f"skills path '{skills_rel}' in {manifest} does not exist at {resolved}")
+
+    # Manifest-specific schema checks
+    if manifest.parent.name == ".claude-plugin":
+        if "interface" in data:
+            errors.append(
+                f"{manifest.relative_to(repo_root)}: contains Codex-only top-level 'interface' block "
+                "(remove to stay compatible with strict Claude Code manifest schemas)"
+            )
+    elif manifest.parent.name == ".codex-plugin":
+        iface = data.get("interface")
+        if isinstance(iface, dict) and "defaultPrompt" in iface:
+            dp = iface["defaultPrompt"]
+            prompts = [dp] if isinstance(dp, str) else dp if isinstance(dp, list) else None
+            if prompts is None or not all(isinstance(p, str) for p in prompts):
+                errors.append(f"{manifest.relative_to(repo_root)}: interface.defaultPrompt must be string or string[]")
+            else:
+                if len(prompts) > 3:
+                    errors.append(
+                        f"{manifest.relative_to(repo_root)}: interface.defaultPrompt has {len(prompts)} items "
+                        "(Codex supports at most 3)"
+                    )
+                for idx, prompt in enumerate(prompts):
+                    if len(prompt) > 128:
+                        errors.append(
+                            f"{manifest.relative_to(repo_root)}: interface.defaultPrompt[{idx}] exceeds 128 chars ({len(prompt)})"
+                        )
+
     print(f"OK manifest: {manifest.relative_to(repo_root)}")
 
 # 2. Validate every SKILL.md under plugins/agora-api/skills
@@ -59,6 +86,82 @@ forbidden_markers = [
 ]
 name_re = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 link_re = re.compile(r"\[[^\]]+\]\(([^)#]+)\)")
+broken_patterns = [
+    (
+        re.compile(r"agora_public_api\.model\."),
+        "uses broken singular import 'agora_public_api.model.' (use 'agora_public_api.models.')",
+    ),
+    (
+        re.compile(r"Phone:\s*&"),
+        "passes pointer to Go LeadInput.Phone (must be string value, not *string)",
+    ),
+    (
+        re.compile(r"\bDouble\s+\w+\s*=\s*[^;\n]*getSuccessRate\("),
+        "assigns Float getSuccessRate() to Java Double (use Float)",
+    ),
+    (
+        re.compile(r'"pricing_model"\s*:\s*"performance"'),
+        "uses invalid CampaignPricingModel 'performance' (valid: commission, subscription, pay_per_call, pay_per_outcome)",
+    ),
+    (
+        re.compile(r'"outcome_type"\s*:\s*"positive"'),
+        "uses invalid OutcomeType 'positive' (valid: NONE, FORM, CALLBACK)",
+    ),
+    (
+        re.compile(r"restish\b[^\n]*-f\s+body\.[^\n]*\s-r(?:\s|$|\))"),
+        "uses non-existent Restish '-r' flag (use '--rsh-print b -o lines')",
+    ),
+]
+
+
+def parse_frontmatter(raw: str) -> dict[str, str]:
+    try:
+        import yaml  # type: ignore[import-not-found]
+
+        loaded = yaml.safe_load(raw)
+        if isinstance(loaded, dict):
+            return {str(k): ("" if v is None else str(v).strip()) for k, v in loaded.items()}
+    except ImportError:
+        pass
+
+    fm: dict[str, str] = {}
+    current_key: str | None = None
+    multiline_lines: list[str] = []
+    multiline_mode: str | None = None
+
+    def flush_multiline() -> None:
+        nonlocal current_key, multiline_lines, multiline_mode
+        if current_key is not None and multiline_mode is not None:
+            joiner = " " if multiline_mode.startswith(">") else "\n"
+            fm[current_key] = joiner.join(line.strip() for line in multiline_lines).strip()
+        current_key = None
+        multiline_lines = []
+        multiline_mode = None
+
+    for raw_line in raw.splitlines():
+        if multiline_mode is not None:
+            if raw_line.startswith((" ", "\t")) or not raw_line.strip():
+                multiline_lines.append(raw_line)
+                continue
+            flush_multiline()
+
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if ":" in raw_line:
+            k, v = raw_line.split(":", 1)
+            key = k.strip()
+            val = v.strip()
+            if val in (">", ">-", "|", "|-"):
+                current_key = key
+                multiline_mode = val
+                multiline_lines = []
+            else:
+                fm[key] = val.strip('"').strip("'")
+
+    flush_multiline()
+    return fm
+
 
 for sdir in skill_dirs:
     skill_md = sdir / "SKILL.md"
@@ -75,14 +178,7 @@ for sdir in skill_dirs:
         errors.append(f"{skill_md.relative_to(repo_root)}: unterminated YAML frontmatter")
         continue
 
-    fm: dict[str, str] = {}
-    for line in parts[1].splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if ":" in line:
-            k, v = line.split(":", 1)
-            fm[k.strip()] = v.strip().strip('"').strip("'")
+    fm = parse_frontmatter(parts[1])
 
     name = fm.get("name", "")
     desc = fm.get("description", "")
@@ -110,16 +206,16 @@ for sdir in skill_dirs:
         for marker in forbidden_markers:
             if marker in content:
                 errors.append(f"{rel}: contains forbidden internal marker '{marker}'")
-        if "agora_public_api.model." in content:
-            errors.append(f"{rel}: uses broken singular import 'agora_public_api.model.' (use 'agora_public_api.models.')")
-        if "Phone: &" in content:
-            errors.append(f"{rel}: passes pointer to Go LeadInput.Phone (must be string value, not *string)")
+        for pat, reason in broken_patterns:
+            if pat.search(content):
+                errors.append(f"{rel}: {reason}")
         if fpath.name == "SKILL.md":
             # Any skill demonstrating lead upload payloads must include disclaimer_version
             if ("/leads/upload" in content or "uploadLeads" in content or "upload-leads" in content):
                 if "disclaimer_version" not in content and "disclaimerVersion" not in content:
                     errors.append(f"{rel}: demonstrates lead upload without required disclaimer_version")
-            # Verify relative markdown links resolve
+        if fpath.suffix == ".md":
+            # Verify relative markdown links resolve in both SKILL.md and reference docs
             for target in link_re.findall(content):
                 if target.startswith(("http://", "https://", "mailto:", "#")):
                     continue

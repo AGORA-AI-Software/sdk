@@ -19,8 +19,8 @@ Covers the **Compliance** (2 endpoints) and **Leads** (8 endpoints) public API s
 | `getLeadUploadDisclaimer` | `GET /api/v1/legal/documents/lead-upload-compliance` | None (public) |
 | `listLeadUploadDisclaimerVersions` | `GET /api/v1/legal/documents/lead-upload-compliance/versions` | None (public) |
 | `uploadLeads` | `POST /api/v1/leads/upload` | Bearer JWT |
-| `get_upload_status` | `GET /api/v1/leads/upload/{import_id}` | Bearer JWT |
-| `list_leads` | `GET /api/v1/leads/?campaign_id={id}` | Bearer JWT |
+| `get_upload_status_api_v1_leads_upload__import_id__get` | `GET /api/v1/leads/upload/{import_id}` | Bearer JWT |
+| `list_leads_api_v1_leads__get` | `GET /api/v1/leads/?campaign_id={id}` | Bearer JWT |
 | `getLead` | `GET /api/v1/leads/{lead_id}` | Bearer JWT |
 | `updateLead` | `PATCH /api/v1/leads/{lead_id}` | Bearer JWT |
 | `updateLeadProfile` | `PATCH /api/v1/leads/{lead_id}/profile` | Bearer JWT |
@@ -105,7 +105,8 @@ curl -sS "https://core.agoraai.tech/api/v1/leads/upload/${IMPORT_ID}" \
 ### List & Filter Leads (Campaign-Scoped)
 
 ```bash
-# Required: campaign_id. Supports status_value, external_id, import_id, search, after_id, page, per_page
+# Required: campaign_id. Supports status_value, import_id, search, after_id, page, per_page
+# (Note: external_id filter is currently available on core-dev.agoraai.tech only, not yet on prod)
 curl -sS "https://core.agoraai.tech/api/v1/leads/?campaign_id=1&per_page=50" \
   -H "Authorization: Bearer ${TOKEN}"
 ```
@@ -163,6 +164,6 @@ curl -sS -i -X DELETE "https://core.agoraai.tech/api/v1/leads/${LEAD_ID}" \
 
 - **`400 disclaimer_version_mismatch`**: Re-fetch `GET /api/v1/legal/documents/lead-upload-compliance` and resend with the current `version`.
 - **`401` during long batch runs**: Bearer tokens expire after **300 seconds**; re-run `POST /api/v1/auth/api-key/token` and retry.
-- **`403` / `404`**: Caller's API key must belong to the owning Company Admin, owning TAM, or app owner for `campaign_id`. Discover valid IDs via `GET /api/v1/campaigns/accessible`.
+- **`403` / `404`**: For `POST /api/v1/leads/upload` and `GET /api/v1/leads/upload/{import_id}`, the API key must belong to the owning **Company Admin** or owning **TAM** (`APPLICATION_ADMIN` receives `403` on upload/status, though allowed on lead CRUD/status/campaigns). Discover valid IDs via `GET /api/v1/campaigns/accessible`.
 - Never log API keys, bearer tokens, `Authorization` headers, or real lead PII. Use synthetic data (`example.test`, `+15551234567`) in examples.
 - Prefer `agora-sdk-usage` for typed application code (note: generated SDKs currently cover auth, lead upload, and webhooks) and `agora-restish-cli` for interactive terminal workflows.

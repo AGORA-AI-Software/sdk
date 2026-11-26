@@ -45,11 +45,13 @@ curl -sS "https://core.agoraai.tech/api/v1/campaigns/accessible?page=1&per_page=
 | Update campaign via blueprint | `PUT /api/v1/campaigns/{campaign_id}/blueprint` | Declarative update of an existing campaign. |
 | Apply starter pack | `POST /api/v1/campaigns/{campaign_id}/apply-blueprint` | Body: `{"blueprint_key": "...", "override_service_name": "...", "calendly_scheduling_url": "..."}`. |
 | Clone campaign | `POST /api/v1/campaigns/{campaign_id}/clone` | Body: `{"new_name": "...", "include_automations": true, "include_scoring_rules": true, "include_custom_fields": true, "attach_shared_company_phones": false}`. |
-| Duplicate campaign | `POST /api/v1/campaigns/{campaign_id}/duplicate` | Quick duplicate of an existing campaign. |
+| Duplicate campaign | `POST /api/v1/campaigns/{campaign_id}/duplicate` | Quick duplicate into DRAFT status. Required body: `{"new_name": "..."}`. |
 
 See [`references/campaign-blueprints.md`](references/campaign-blueprints.md) for declarative blueprint, status, script, action-button, and automation-rule payloads.
 
 ### Dry-Run Blueprint Provision Example
+
+Valid `campaign_type` values: `inbound`, `outbound`, `hybrid`. Valid `pricing_model` values: `commission`, `subscription`, `pay_per_call`, `pay_per_outcome`.
 
 ```bash
 curl -sS -X POST https://core.agoraai.tech/api/v1/campaigns/provision \
@@ -60,7 +62,7 @@ curl -sS -X POST https://core.agoraai.tech/api/v1/campaigns/provision \
     "dry_run": true,
     "auto_launch": false,
     "campaign_type": "outbound",
-    "pricing_model": "performance"
+    "pricing_model": "commission"
   }'
 ```
 
@@ -97,12 +99,12 @@ curl -sS "https://core.agoraai.tech/api/v1/campaigns/${CAMPAIGN_ID}/launch-readi
 Deterministic, paginated call intelligence for CRM/warehouse sync.
 
 - **`since` / `updated_since` (ISO-8601 UTC):** Matches on the call's effective last update so async transcripts, AI summaries/analysis, and dispositions arriving after `started_at` are never missed.
-- **Keyset pagination (`after_id`):** Pass the previous response's `next_after_id` for gap-free incremental syncs.
+- **Keyset pagination (`after_id`):** Pair `after_id` with `sort_by=id&sort_dir=asc`. The response populates `next_after_id` **only** when `sort_by=id&sort_dir=asc` and a full page (`len(calls) == per_page`) is returned; otherwise `next_after_id` is `null`.
 - **Recordings boundary:** Responses include `has_recording` (boolean) and `web_app_url` (deep link to authenticated playback in the AGORA Web App). Raw audio URLs are intentionally never returned.
 
 ```bash
-# Incremental sync of completed calls updated since a watermark
-curl -sS "https://core.agoraai.tech/api/v1/calls/?campaign_id=${CAMPAIGN_ID}&since=2026-11-01T00:00:00Z&per_page=100" \
+# Incremental sync of calls updated since a watermark (keyset-paginated by id)
+curl -sS "https://core.agoraai.tech/api/v1/calls/?campaign_id=${CAMPAIGN_ID}&since=2026-11-01T00:00:00Z&sort_by=id&sort_dir=asc&per_page=100" \
   -H "Authorization: Bearer ${TOKEN}"
 ```
 
@@ -121,6 +123,8 @@ curl -sS "https://core.agoraai.tech/api/v1/calls/?campaign_id=${CAMPAIGN_ID}&sin
       "lead_id": 4401,
       "external_id": "crm-10042",
       "phone_number": "+15551234567",
+      "phone_to": "+15551234567",
+      "phone_from": "+15550001111",
       "direction": "outbound",
       "status": "completed",
       "disposition": "interested",
@@ -134,14 +138,14 @@ curl -sS "https://core.agoraai.tech/api/v1/calls/?campaign_id=${CAMPAIGN_ID}&sin
       "transcript": "...",
       "ai_summary": "...",
       "has_recording": true,
-      "web_app_url": "https://app.agoraai.tech/..."
+      "web_app_url": "https://app.agoraai.tech/company/calls/9012"
     }
   ],
   "total": 1,
   "page": 1,
   "per_page": 100,
   "total_pages": 1,
-  "next_after_id": 9012
+  "next_after_id": null
 }
 ```
 

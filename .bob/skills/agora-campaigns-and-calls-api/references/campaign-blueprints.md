@@ -10,8 +10,8 @@ Schema: `CampaignBlueprintRequest`
 
 - **Required:** `name` (string)
 - **Control flags:** `dry_run` (boolean — validate without saving), `auto_launch` (boolean), `company_id`, `campaign_id`, `clone_from_campaign_id`, `template_preset`
-- **Core metadata:** `description`, `campaign_type`, `pricing_model`, `commission_rate`, `flat_fee_monthly`, `cost_per_call`, `cost_per_outcome`, `agent_commission_rate`, `budget`, `max_agents`, `max_leads`, `start_date`, `end_date`, `is_hipaa_compliant`, `sms_enabled`, `allow_email_override`, `conversion_model`, `calendly_url`, `calendly_event_type_uri`, `call_script`
-- **10 Subsystems (optional arrays/objects):**
+- **Core metadata:** `description`, `campaign_type` (`inbound`, `outbound`, `hybrid`), `pricing_model` (`commission`, `subscription`, `pay_per_call`, `pay_per_outcome`), `commission_rate`, `flat_fee_monthly`, `cost_per_call`, `cost_per_outcome`, `agent_commission_rate`, `budget`, `max_agents`, `max_leads`, `start_date`, `end_date`, `is_hipaa_compliant`, `sms_enabled`, `allow_email_override`, `conversion_model`, `calendly_url`, `calendly_event_type_uri`, `call_script`
+- **11 Subsystem fields (covering the 10 campaign subsystems; all optional arrays/objects):**
   - `calling_schedule` (`BlueprintCallingSchedule`)
   - `statuses` (`BlueprintStatusItem[]`)
   - `sms_templates` (`BlueprintSmsTemplateItem[]`)
@@ -33,7 +33,7 @@ Tip: Call `GET /api/v1/campaigns/{campaign_id}/blueprint` on an existing working
 Schema: `PipelineStatusCreate`
 
 - **Required:** `name`, `code`
-- **Optional:** `description`, `color`, `is_agent_selectable`, `hides_from_agent_queue`, `requires_callback_date`, `sends_to_review`, `notify_company_email`, `notify_company_text`, `company_notification_email`, `company_notification_phone`, `outcome_type`, `is_conversion`, `is_active`, `is_default`, `notification_recipients`
+- **Optional:** `description`, `color`, `is_agent_selectable`, `hides_from_agent_queue`, `requires_callback_date`, `sends_to_review`, `notify_company_email`, `notify_company_text`, `company_notification_email`, `company_notification_phone`, `outcome_type` (`"NONE"`, `"FORM"`, or `"CALLBACK"` — at most one `FORM` and one `CALLBACK` per campaign), `is_conversion`, `is_active`, `is_default`, `notification_recipients`
 
 ```bash
 curl -sS -X POST "https://core.agoraai.tech/api/v1/campaigns/${CAMPAIGN_ID}/statuses" \
@@ -42,7 +42,7 @@ curl -sS -X POST "https://core.agoraai.tech/api/v1/campaigns/${CAMPAIGN_ID}/stat
   -d '{
     "name": "Qualified Demo",
     "code": "qualified_demo",
-    "outcome_type": "positive",
+    "outcome_type": "NONE",
     "is_conversion": true,
     "is_agent_selectable": true
   }'

@@ -32,18 +32,27 @@ from pathlib import Path
 spec = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
 ref_text = Path(sys.argv[2]).read_text(encoding="utf-8")
 
-live_ops: set[tuple[str, str]] = set()
+live_ops: dict[tuple[str, str], str] = {}
 for path, methods in spec.get("paths", {}).items():
-    for method in methods:
-        if method.lower() in ("get", "post", "put", "patch", "delete"):
-            live_ops.add((method.upper(), path))
+    for method, op in methods.items():
+        if method.lower() in ("get", "post", "put", "patch", "delete") and isinstance(op, dict):
+            live_ops[(method.upper(), path)] = str(op.get("operationId", ""))
 
-doc_ops: set[tuple[str, str]] = set()
-for m in re.finditer(r"^\|\s*`(GET|POST|PUT|PATCH|DELETE)`\s*\|\s*`([^`]+)`\s*\|", ref_text, re.MULTILINE):
-    doc_ops.add((m.group(1), m.group(2)))
+doc_ops: dict[tuple[str, str], str] = {}
+for m in re.finditer(
+    r"^\|\s*`(GET|POST|PUT|PATCH|DELETE)`\s*\|\s*`([^`]+)`\s*\|\s*`([^`]+)`\s*\|",
+    ref_text,
+    re.MULTILINE,
+):
+    doc_ops[(m.group(1), m.group(2))] = m.group(3)
 
-missing_from_skills = sorted(live_ops - doc_ops)
-stale_in_skills = sorted(doc_ops - live_ops)
+missing_from_skills = sorted(set(live_ops) - set(doc_ops))
+stale_in_skills = sorted(set(doc_ops) - set(live_ops))
+opid_mismatches = sorted(
+    (k[0], k[1], live_ops[k], doc_ops[k])
+    for k in set(live_ops) & set(doc_ops)
+    if live_ops[k] != doc_ops[k]
+)
 
 print(f"[PASS] Live OpenAPI endpoints: {len(live_ops)} | Documented in skill reference: {len(doc_ops)}")
 if missing_from_skills:
@@ -54,9 +63,13 @@ if stale_in_skills:
     print("[FAIL] Documented endpoints missing from live OpenAPI:", file=sys.stderr)
     for method, path in stale_in_skills:
         print(f"  - {method} {path}", file=sys.stderr)
-if missing_from_skills or stale_in_skills:
+if opid_mismatches:
+    print("[FAIL] operationId mismatch between live OpenAPI and skill reference:", file=sys.stderr)
+    for method, path, live_id, doc_id in opid_mismatches:
+        print(f"  - {method} {path}: live={live_id} vs doc={doc_id}", file=sys.stderr)
+if missing_from_skills or stale_in_skills or opid_mismatches:
     sys.exit(1)
-print("[PASS] 100% two-way endpoint parity between live OpenAPI and skill reference.")
+print("[PASS] 100% two-way (method, path, operationId) parity between live OpenAPI and skill reference.")
 PY
 
 # 2. Public compliance endpoints

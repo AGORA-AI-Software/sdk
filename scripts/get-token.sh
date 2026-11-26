@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Exchanges AGORA_API_KEY for a bearer token and prints {"token": "..."} for restish external-tool auth.
+# Exchanges AGORA_API_KEY for a bearer token and prints {"access_token": "..."} for restish external-tool auth.
 # Usage: scripts/get-token.sh [base_url]
 # Default base_url: https://core.agoraai.tech
 set -euo pipefail

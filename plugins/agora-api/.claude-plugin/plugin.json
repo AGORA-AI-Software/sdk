@@ -6,10 +6,5 @@
     "name": "AGORA AI Software",
     "url": "https://github.com/AGORA-AI-Software"
   },
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "AGORA Public API",
-    "shortDescription": "Complete AGORA Public API workflows (38 endpoints, 6 domains).",
-    "longDescription": "Guidance for AGORA's public API-key token exchange, DNC/TCPA compliance disclaimer flow, lead upload & lifecycle, campaign blueprints & readiness, call outcome sync, webhook observability, Restish CLI, and generated SDKs."
-  }
+  "skills": "./skills/"
 }
