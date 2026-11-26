@@ -53,27 +53,36 @@ The response contains an `access_token`. Set it in your shell:
 export AGORA_ACCESS_TOKEN='paste-token-here'
 ```
 
-### Step 2 — Upload a lead
+### Step 2 — Fetch the current compliance disclaimer version
+
+```bash
+DISCLAIMER_VERSION=$(curl -sS \
+  https://core.agoraai.tech/api/v1/legal/documents/lead-upload-compliance \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])")
+```
+
+### Step 3 — Upload a lead
 
 ```bash
 curl -sS -X POST https://core.agoraai.tech/api/v1/leads/upload \
   -H "Authorization: Bearer $AGORA_ACCESS_TOKEN" \
   -H 'Content-Type: application/json' \
-  -d '{
-    "campaign_id": 1,
-    "source": "api",
-    "leads": [
+  -d "{
+    \"campaign_id\": 1,
+    \"source\": \"api\",
+    \"leads\": [
       {
-        "first_name": "Jane",
-        "last_name": "Doe",
-        "email": "jane.doe@example.test",
-        "phone": "+15551234567",
-        "company": "Example Co",
-        "title": "VP of Operations"
+        \"first_name\": \"Jane\",
+        \"last_name\": \"Doe\",
+        \"email\": \"jane.doe@example.test\",
+        \"phone\": \"+15551234567\",
+        \"company\": \"Example Co\",
+        \"title\": \"VP of Operations\"
       }
     ],
-    "compliance_acknowledged": true
-  }'
+    \"compliance_acknowledged\": true,
+    \"disclaimer_version\": \"${DISCLAIMER_VERSION}\"
+  }"
 ```
 
 ---
@@ -168,18 +177,19 @@ Live endpoints:
 | `loginWithApiKey` | `POST` | `/api/v1/auth/api-key/token` |
 | `uploadLeads` | `POST` | `/api/v1/leads/upload` |
 
-### SDK generation
+### SDK generation & skill validation
 
 ```bash
-make generate           # regenerate all SDKs + skills from openapi/agora-public-api.yaml
-make generate-skills    # regenerate AI-agent skill content only
+make generate           # regenerate all SDKs + sync & lint skills
+make sync-bob-skills    # mirror plugins/agora-api/skills -> .bob/skills for IBM Bob
 make lint-openapi       # validate the OpenAPI contract
-make lint-plugin        # validate the AI-agent plugin manifests
+make lint-plugin        # validate plugin manifests, SKILL.md frontmatter/links, and .bob/skills parity
+make test-skills-live   # verify skill endpoint parity and live API contract against core-dev.agoraai.tech
 ```
 
-### AI-agent plugins
+### AI-agent plugins & IBM Bob skills
 
-Agent plugins live in [`plugins/agora-api`](plugins/agora-api). They expose reviewed skill content for AI agents that need to produce Agora API examples.
+Agent plugins live in [`plugins/agora-api`](plugins/agora-api) (packaged for Claude Code and OpenAI Codex) and are mirrored to [`.bob/skills`](.bob/skills) for IBM Bob. Together, the 6 skills cover all **38 live Public API endpoints** across Authentication, Compliance, Campaigns, Leads, Calls, and Webhooks.
 
 ---
 
